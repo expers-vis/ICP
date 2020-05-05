@@ -11,6 +11,9 @@
 #include <QTimer>
 #include <myscene.h>
 #include <QDebug>
+#include <QFile>
+#include <QMessageBox>
+#include <string>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -83,8 +86,36 @@ void MainWindow::initScene()
 }
 
 void MainWindow::initSceneStreets(MyScene* scene) {
+    QFile file("streets.txt");
+
+       QString line;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        QTextStream stream(&file);
+        while (!stream.atEnd()){
+
+            line = stream.readLine();
+            QStringList list = line.split(" ");
+
+            auto name = list.at(0).toLocal8Bit().constData();
+
+            double x1 = QString(list.at(1).toLocal8Bit().constData()).toDouble();
+            double y1 = QString(list.at(2).toLocal8Bit().constData()).toDouble();
+            double x2 = QString(list.at(3).toLocal8Bit().constData()).toDouble();
+            double y2 = QString(list.at(4).toLocal8Bit().constData()).toDouble();
+
+            auto ulica = scene->addLine(x1,y1,x2,y2, street_default);
+
+        }
+
+    }
+       else{
+           QMessageBox::information(0,"info",file.errorString());
+        exit(1);
+       }
+    file.close();
+
     /* insert streets into scene */
-    auto chrenovska = scene->addLine(230,230,230,110, street_default);
+    /*auto chrenovska = scene->addLine(230,230,230,110, street_default);
     auto krizna_1 = scene->addLine(100,230,110,230, street_default);
     auto krizna_2 = scene->addLine(110,230,190,230, street_default);
     auto krizna_3 = scene->addLine(190,230,230,230, street_default);
@@ -112,21 +143,25 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     auto ranna = scene->addLine(280,350,170,360, street_default);
     auto drisliak = scene->addLine(280,350,170,300, street_default);
     auto jankovska = scene->addLine(50,100,30,100, street_default);
+    auto lidlova = scene->addLine(30,100,30,40, street_default);
+    auto dlha = scene->addLine(30,40,280,40, street_default);
+    auto javorova = scene->addLine(280,40,280,60, street_default);
     auto martinska = scene->addLine(30,100,30,230, street_default);
     auto maticna = scene->addLine(30,230,100,230, street_default);
     auto kotolna = scene->addLine(100,230,100,300, street_default);
     auto vodna = scene->addLine(100,300,120,380, street_default);
+    auto kriva = scene->addLine(40,300,30,230, street_default);
     auto nivy = scene->addLine(100,300,40,300, street_default);
     auto sedlacka = scene->addLine(40,300,40,350, street_default);
 
     /* create containers */
-    line1_streets = new QVector<QGraphicsLineItem*>;
+   /* line1_streets = new QVector<QGraphicsLineItem*>;
     line2_streets = new QVector<QGraphicsLineItem*>;
     line4_streets = new QVector<QGraphicsLineItem*>;
     line20_streets = new QVector<QGraphicsLineItem*>;
 
     /* store streets in bus line containers */
-    line1_streets->append(prava);
+   /* line1_streets->append(prava);
     line1_streets->append(lava);
     line1_streets->append(vodna);
     line1_streets->append(kotolna);
@@ -178,7 +213,7 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     line20_streets->append(kotolna);
     line20_streets->append(krizna_1);
     line20_streets->append(krizna_2);
-    line20_streets->append(krizna_3);
+    line20_streets->append(krizna_3);*/
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
