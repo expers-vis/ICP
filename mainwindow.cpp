@@ -9,11 +9,10 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsTextItem>
 #include <QTimer>
-#include <myscene.h>
-#include <QDebug>
 #include <QFile>
 #include <QMessageBox>
-#include <string>
+#include <myscene.h>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -43,20 +42,13 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     /* delete containers */
-    delete line1_buses;
-    delete line2_buses;
-    delete line4_buses;
-    delete line20_buses;
+    delete line1;
+    delete line2;
+    delete line4;
+    delete line20;
 
-    delete line1_stops;
-    delete line2_stops;
-    delete line4_stops;
-    delete line20_stops;
-
-    delete line1_streets;
-    delete line2_streets;
-    delete line4_streets;
-    delete line20_streets;
+    delete street_list;
+    delete stop_list;
 
     delete timer;
     delete ui;
@@ -68,12 +60,21 @@ void MainWindow::initScene()
     ui->graphicsView->setScene(scene);
 
     /* render background */
-    auto bg_img = QPixmap("/home/xhiner00/Desktop/ICP/original", "png", Qt::AutoColor);     // load image
+    qDebug() << QCoreApplication::applicationDirPath();
+    auto bg_img = QPixmap(QCoreApplication::applicationDirPath() + "/original.png", "png", Qt::AutoColor);     // load image
     bg_img = bg_img.scaledToWidth(400, Qt::TransformationMode::FastTransformation);
     bg_img = bg_img.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
     auto bg_ptr = scene->addPixmap(bg_img);     // insert image into scene
     bg_ptr->setPos(-35, 25);
     auto sqr = scene->addRect(-35, 25, 400, 400, street_highlight); // background bounds for testing
+
+    street_list = new QVector<t_street*>;
+    stop_list = new QVector<t_stop*>;
+
+    line1 = new t_line;
+    line2 = new t_line;
+    line4 = new t_line;
+    line20 = new t_line;
 
     /* render street lines */
     initSceneStreets(scene);
@@ -86,162 +87,119 @@ void MainWindow::initScene()
 }
 
 void MainWindow::initSceneStreets(MyScene* scene) {
-    QFile file("streets.txt");
+    QFile file("streets.txt");      // filename
+    QString line;
 
-       QString line;
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream stream(&file);
+
         while (!stream.atEnd()){
 
             line = stream.readLine();
             QStringList list = line.split(" ");
 
-            auto name = list.at(0).toLocal8Bit().constData();
+            t_street *street = new t_street;
 
             double x1 = QString(list.at(1).toLocal8Bit().constData()).toDouble();
             double y1 = QString(list.at(2).toLocal8Bit().constData()).toDouble();
             double x2 = QString(list.at(3).toLocal8Bit().constData()).toDouble();
             double y2 = QString(list.at(4).toLocal8Bit().constData()).toDouble();
 
-            auto ulica = scene->addLine(x1,y1,x2,y2, street_default);
+            street->obj = scene->addLine(x1,y1,x2,y2, street_default);
+            street->name = list.at(0).toLocal8Bit().constData();
 
+            street_list->append(street);
         }
 
     }
-       else{
-           QMessageBox::information(0,"info",file.errorString());
+    else{
+        QMessageBox::information(0,"info",file.errorString());
         exit(1);
-       }
+    }
+
     file.close();
-
-    /* insert streets into scene */
-    /*auto chrenovska = scene->addLine(230,230,230,110, street_default);
-    auto krizna_1 = scene->addLine(100,230,110,230, street_default);
-    auto krizna_2 = scene->addLine(110,230,190,230, street_default);
-    auto krizna_3 = scene->addLine(190,230,230,230, street_default);
-    auto zelena = scene->addLine(180,110,230,110, street_default);
-    auto modra = scene->addLine(100,230,100,180, street_default);
-    auto fialova = scene->addLine(100,180,180,110, street_default);
-    auto prazena = scene->addLine(230,110,230,60, street_default);
-    auto severna = scene->addLine(230,60,50,60, street_default);
-    auto dobogan_1 = scene->addLine(50,100,50,180, street_default);
-    auto dobogan_2 = scene->addLine(50,60,50,100, street_default);
-    auto spojna = scene->addLine(50,180,100,180, street_default);
-    auto bengoro = scene->addLine(50,180,100,230, street_default);
-    auto dobra = scene->addLine(110,230,110,300, street_default);
-    auto marianska = scene->addLine(190,230,170,300, street_default);
-    auto koleso_1 = scene->addLine(100,300,110,300, street_default);
-    auto koleso_2 = scene->addLine(170,300,110,300, street_default);
-    auto lesna = scene->addLine(170,300,170,360, street_default);
-    auto prava = scene->addLine(170,360,220,400, street_default);
-    auto lava = scene->addLine(170,360,120,380, street_default);
-    auto masna = scene->addLine(230,110,280,110, street_default);
-    auto uholna = scene->addLine(280,110,230,230, street_default);
-    auto heso = scene->addLine(280,110,280,60, street_default);
-    auto blazena = scene->addLine(280,60,230,60, street_default);
-    auto sumracna = scene->addLine(280,110,280,350, street_default);
-    auto ranna = scene->addLine(280,350,170,360, street_default);
-    auto drisliak = scene->addLine(280,350,170,300, street_default);
-    auto jankovska = scene->addLine(50,100,30,100, street_default);
-    auto lidlova = scene->addLine(30,100,30,40, street_default);
-    auto dlha = scene->addLine(30,40,280,40, street_default);
-    auto javorova = scene->addLine(280,40,280,60, street_default);
-    auto martinska = scene->addLine(30,100,30,230, street_default);
-    auto maticna = scene->addLine(30,230,100,230, street_default);
-    auto kotolna = scene->addLine(100,230,100,300, street_default);
-    auto vodna = scene->addLine(100,300,120,380, street_default);
-    auto kriva = scene->addLine(40,300,30,230, street_default);
-    auto nivy = scene->addLine(100,300,40,300, street_default);
-    auto sedlacka = scene->addLine(40,300,40,350, street_default);
-
-    /* create containers */
-   /* line1_streets = new QVector<QGraphicsLineItem*>;
-    line2_streets = new QVector<QGraphicsLineItem*>;
-    line4_streets = new QVector<QGraphicsLineItem*>;
-    line20_streets = new QVector<QGraphicsLineItem*>;
-
-    /* store streets in bus line containers */
-   /* line1_streets->append(prava);
-    line1_streets->append(lava);
-    line1_streets->append(vodna);
-    line1_streets->append(kotolna);
-    line1_streets->append(modra);
-    line1_streets->append(fialova);
-    line1_streets->append(zelena);
-    line1_streets->append(masna);
-    line1_streets->append(sumracna);
-    line1_streets->append(ranna);
-
-    line2_streets->append(sedlacka);
-    line2_streets->append(nivy);
-    line2_streets->append(kotolna);
-    line2_streets->append(bengoro);
-    line2_streets->append(dobogan_1);
-    line2_streets->append(dobogan_2);
-    line2_streets->append(severna);
-    line2_streets->append(blazena);
-    line2_streets->append(heso);
-    line2_streets->append(sumracna);
-    line2_streets->append(drisliak);
-    line2_streets->append(koleso_1);
-    line2_streets->append(koleso_2);
-
-    line4_streets->append(maticna);
-    line4_streets->append(martinska);
-    line4_streets->append(jankovska);
-    line4_streets->append(dobogan_1);
-    line4_streets->append(spojna);
-    line4_streets->append(fialova);
-    line4_streets->append(zelena);
-    line4_streets->append(masna);
-    line4_streets->append(uholna);
-    line4_streets->append(krizna_3);
-    line4_streets->append(marianska);
-    line4_streets->append(koleso_2);
-    line4_streets->append(dobra);
-    line4_streets->append(krizna_1);
-
-    line20_streets->append(chrenovska);
-    line20_streets->append(prazena);
-    line20_streets->append(blazena);
-    line20_streets->append(heso);
-    line20_streets->append(sumracna);
-    line20_streets->append(ranna);
-    line20_streets->append(lesna);
-    line20_streets->append(koleso_2);
-    line20_streets->append(koleso_1);
-    line20_streets->append(kotolna);
-    line20_streets->append(krizna_1);
-    line20_streets->append(krizna_2);
-    line20_streets->append(krizna_3);*/
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
-    /* insert bus stop icons into scene | x-5,y-5 to center */
-    auto line1_stop1 = scene->addRect(275, 195, 10, 10, stop_pen_default, stop_brush_default);  //sumracna
+    QFile file("stops.txt");      // filename
+    QString line;
 
-    /* create containers */
-    line1_stops = new QVector<QGraphicsRectItem*>;
-    line2_stops = new QVector<QGraphicsRectItem*>;
-    line4_stops = new QVector<QGraphicsRectItem*>;
-    line20_stops = new QVector<QGraphicsRectItem*>;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
 
-    /* store bus stop pointers in container */
-    line1_stops->append(line1_stop1);
+        while (!stream.atEnd()){
+
+            line = stream.readLine();
+            QStringList list = line.split(" ");
+
+            t_stop *stop = new t_stop;
+
+            double x = QString(list.at(1).toLocal8Bit().constData()).toDouble();
+            double y = QString(list.at(2).toLocal8Bit().constData()).toDouble();
+
+            stop->obj = scene->addRect(x, y, 10, 10, stop_pen_default, stop_brush_default);
+            stop->name = list.at(0).toLocal8Bit().constData();
+
+            stop_list->append(stop);
+        }
+
+    }
+    else{
+        QMessageBox::information(0,"info",file.errorString());
+        exit(1);
+    }
+
+    file.close();
 }
 
 void MainWindow::initSceneBuses(MyScene *scene) {
-    /* insert bus icons into scene */
-    auto line1_bus1 = scene->addEllipse(220, 400, 10, 10, bus_pen_default, bus_brush_default);
+    QFile file("buses.txt");      // filename
+    QString line;
 
-    /* create containers */
-    line1_buses = new QVector<QGraphicsEllipseItem*>;
-    line2_buses = new QVector<QGraphicsEllipseItem*>;
-    line4_buses = new QVector<QGraphicsEllipseItem*>;
-    line20_buses = new QVector<QGraphicsEllipseItem*>;
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
 
-    /* store bus pointers in container */
-    line1_buses->append(line1_bus1);
+        while (!stream.atEnd()){
+
+            line = stream.readLine();
+            QStringList list = line.split(" ");
+
+            t_bus *bus = new t_bus;
+
+            double x = QString(list.at(1).toLocal8Bit().constData()).toDouble();
+            double y = QString(list.at(2).toLocal8Bit().constData()).toDouble();
+
+
+            bus->obj = scene->addEllipse(x, y, 10, 10, bus_pen_default, bus_brush_default);
+            bus->line_id = QString(list.at(0).toLocal8Bit().constData()).toInt();
+
+            /* assign to line */
+            switch(bus->line_id) {
+                case 1:
+                    line1->buses->append(bus);
+                break;
+
+                case 2:
+                    line2->buses->append(bus);
+                break;
+
+                case 4:
+                    line4->buses->append(bus);
+                break;
+
+                case 20:
+                    line20->buses->append(bus);
+                break;
+            }
+        }
+
+    }
+    else{
+        QMessageBox::information(0,"info",file.errorString());
+        exit(1);
+    }
+
+    file.close();
 }
 
 void MainWindow::initTimer() {
@@ -339,70 +297,70 @@ void MainWindow::speedNorm(){
 
 void MainWindow::highlight(int idx) {
     /* clear any previous highlights */
-    drop_highlight_line(line1_streets, line1_stops, line1_buses);
-    drop_highlight_line(line2_streets, line2_stops, line2_buses);
-    drop_highlight_line(line4_streets, line4_stops, line4_buses);
-    drop_highlight_line(line20_streets, line20_stops, line20_buses);
+    drop_highlight_line(line1);
+    drop_highlight_line(line2);
+    drop_highlight_line(line4);
+    drop_highlight_line(line20);
 
     /* select which line to highlight */
     switch(idx) {
         case 0: break;
         case 1:
-            highlight_line(line1_streets, line1_stops, line1_buses);
+            highlight_line(line1);
         break;
         case 2:
-            highlight_line(line2_streets, line2_stops, line2_buses);
+            highlight_line(line2);
         break;
         case 3:
-            highlight_line(line4_streets, line4_stops, line4_buses);
+            highlight_line(line4);
         break;
         case 4:
-            highlight_line(line20_streets, line20_stops, line20_buses);
+            highlight_line(line20);
         break;
         default:
             break;
     }
 }
 
-void MainWindow::highlight_line(QVector<QGraphicsLineItem *> *streets, QVector<QGraphicsRectItem *> *stops, QVector<QGraphicsEllipseItem *> *buses) {
-    QVector<QGraphicsLineItem*>::iterator i;        // street iterator
-    QVector<QGraphicsEllipseItem*>::iterator j;     // bus iterator
-    QVector<QGraphicsRectItem*>::iterator k;        // bus stop iterator
+void MainWindow::highlight_line(t_line *line) {
+    QVector<t_street*>::iterator i;        // street iterator
+    QVector<t_bus*>::iterator j;     // bus iterator
+    QVector<t_stop*>::iterator k;        // bus stop iterator
 
-    for(i = streets->begin(); i != streets->end(); ++i) {
-        (*i)->setPen(street_highlight);
-        (*i)->setZValue(1);
+    for(i = line->streets->begin(); i != line->streets->end(); ++i) {
+        (*i)->obj->setPen(street_highlight);
+        (*i)->obj->setZValue(1);
     }
-    for(j = buses->begin(); j != buses->end(); ++j) {
-        (*j)->setPen(bus_pen_highlight);
-        (*j)->setBrush((bus_brush_highlight));
-        (*j)->setZValue(1);
+    for(j = line->buses->begin(); j != line->buses->end(); ++j) {
+        (*j)->obj->setPen(bus_pen_highlight);
+        (*j)->obj->setBrush((bus_brush_highlight));
+        (*j)->obj->setZValue(1);
     }
-    for(k = stops->begin(); k != stops->end(); k++) {
-        (*k)->setPen(stop_pen_highlight);
-        (*k)->setBrush(stop_brush_hightlight);
-        (*j)->setZValue(1);
+    for(k = line->stops->begin(); k != line->stops->end(); k++) {
+        (*k)->obj->setPen(stop_pen_highlight);
+        (*k)->obj->setBrush(stop_brush_hightlight);
+        (*j)->obj->setZValue(1);
     }
 }
 
-void MainWindow::drop_highlight_line(QVector<QGraphicsLineItem *> *streets, QVector<QGraphicsRectItem *> *stops, QVector<QGraphicsEllipseItem *> *buses) {
-    QVector<QGraphicsLineItem*>::iterator i;        // street iterator
-    QVector<QGraphicsEllipseItem*>::iterator j;     // bus iterator
-    QVector<QGraphicsRectItem*>::iterator k;        // bus stop iterator
+void MainWindow::drop_highlight_line(t_line *line) {
+    QVector<t_street*>::iterator i;        // street iterator
+    QVector<t_bus*>::iterator j;     // bus iterator
+    QVector<t_stop*>::iterator k;        // bus stop iterator
 
-    for(i = streets->begin(); i != streets->end(); ++i) {
-        (*i)->setPen(street_default);   // default pen
-        (*i)->setZValue(0);             // default depth
+    for(i = line->streets->begin(); i != line->streets->end(); ++i) {
+        (*i)->obj->setPen(street_default);
+        (*i)->obj->setZValue(0);
     }
-    for(j = buses->begin(); j != buses->end(); ++j) {
-        (*j)->setPen(bus_pen_default);
-        (*j)->setBrush((bus_brush_default));
-        (*j)->setZValue(0);
+    for(j = line->buses->begin(); j != line->buses->end(); ++j) {
+        (*j)->obj->setPen(bus_pen_default);
+        (*j)->obj->setBrush((bus_brush_default));
+        (*j)->obj->setZValue(0);
     }
-    for(k = stops->begin(); k != stops->end(); k++) {
-        (*k)->setPen(stop_pen_default);
-        (*k)->setBrush(stop_brush_default);
-        (*j)->setZValue(0);
+    for(k = line->stops->begin(); k != line->stops->end(); k++) {
+        (*k)->obj->setPen(stop_pen_default);
+        (*k)->obj->setBrush(stop_brush_default);
+        (*j)->obj->setZValue(0);
     }
 }
 
@@ -448,4 +406,34 @@ void MainWindow::timerAction(){
         //ui->label->setPixmap(QPixmap("/home/xhiner00/Desktop/ICP/boof", nullptr, Qt::AutoColor));
         time = true;
     }
+}
+
+void MainWindow::t_line::claimStreets() {
+    /* claim streets */
+    QFile file("lines.txt");      // filename
+    QString line;
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
+
+        while (!stream.atEnd()){
+
+            line = stream.readLine();
+            QStringList list = line.split(" ");
+
+            if(t_line::id == QString(list.at(0).toLocal8Bit().constData()).toInt()) {
+                QStringList::iterator i = list.begin();
+                /*while(i != list.end()) {
+                    MainWindow::street_list->
+                }*/
+            }
+        }
+
+    }
+    else{
+        QMessageBox::information(0,"info",file.errorString());
+        exit(1);
+    }
+
+    file.close();
 }

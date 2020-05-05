@@ -7,6 +7,7 @@
 #include <QGraphicsScene>
 #include <QTimer>
 #include <QPropertyAnimation>
+#include <memory>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow;}
@@ -19,28 +20,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-private:
-    void initScene();
-    void initSceneStreets(MyScene* scene);
-    void initSceneBuses(MyScene* scene);
-    void initSceneStops(MyScene* scene);
-    void initTimer();
-    void initPens();
-    void initSelectBox();
-    void highlight_line(QVector<QGraphicsLineItem*>*, QVector<QGraphicsRectItem*>*, QVector<QGraphicsEllipseItem*>*);
-    void drop_highlight_line(QVector<QGraphicsLineItem*>*, QVector<QGraphicsRectItem*>*, QVector<QGraphicsEllipseItem*>*);
-
-private slots:
-    void zoomin();
-    void zoomout();
-    void zoom(int);
-    void timerAction();
-    void speedUp();
-    void speedDown();
-    void speedNorm();
-    void highlight(int);
-    void showTimetable();
 
 private:
     Ui::MainWindow *ui;
@@ -61,22 +40,58 @@ private:
     QBrush bus_brush_default;
     QBrush bus_brush_highlight;
 
-    /* vectors containing street pointerss for their bus lines */
-    QVector<QGraphicsLineItem*> *line1_streets;
-    QVector<QGraphicsLineItem*> *line2_streets;
-    QVector<QGraphicsLineItem*> *line4_streets;
-    QVector<QGraphicsLineItem*> *line20_streets;
+    struct t_street {
+        QString name;
+        QGraphicsLineItem *obj;
+    };
 
-    /* vectors containing stop pointers for their bus lines */
-    QVector<QGraphicsRectItem*> *line1_stops;
-    QVector<QGraphicsRectItem*> *line2_stops;
-    QVector<QGraphicsRectItem*> *line4_stops;
-    QVector<QGraphicsRectItem*> *line20_stops;
+    struct t_stop {
+        QString name;
+        QGraphicsRectItem *obj;
+    };
 
-    /* vectors containing buse pointers for their bus lines */
-    QVector<QGraphicsEllipseItem*> *line1_buses;
-    QVector<QGraphicsEllipseItem*> *line2_buses;
-    QVector<QGraphicsEllipseItem*> *line4_buses;
-    QVector<QGraphicsEllipseItem*> *line20_buses;
+    struct t_bus {
+        int line_id;        // id of line it belongs to
+        QGraphicsEllipseItem *obj;
+    };
+
+    /* visual line objects */
+    struct t_line {
+        int id;
+        std::shared_ptr<QVector<t_street*>> streets;
+        std::shared_ptr<QVector<t_stop*>> stops;
+        std::shared_ptr<QVector<t_bus*>> buses;
+        void claimStreets();
+    };
+
+    QVector<t_street*> *street_list;
+    QVector<t_stop*> *stop_list;
+
+    t_line *line1;
+    t_line *line2;
+    t_line *line4;
+    t_line *line20;
+
+private:
+    void initScene();
+    void initSceneStreets(MyScene* scene);
+    void initSceneBuses(MyScene* scene);
+    void initSceneStops(MyScene* scene);
+    void initTimer();
+    void initPens();
+    void initSelectBox();
+    void highlight_line(t_line*);
+    void drop_highlight_line(t_line*);
+
+private slots:
+    void zoomin();
+    void zoomout();
+    void zoom(int);
+    void timerAction();
+    void speedUp();
+    void speedDown();
+    void speedNorm();
+    void highlight(int);
+    void showTimetable();
 };
 #endif // MAINWINDOW_H
