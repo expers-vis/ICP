@@ -58,9 +58,9 @@ private:
     /* visual line objects */
     struct t_line {
         int id;
-        std::shared_ptr<QVector<t_street*>> streets;
-        std::shared_ptr<QVector<t_stop*>> stops;
-        std::shared_ptr<QVector<t_bus*>> buses;
+        QVector<t_street*> streets;
+        QVector<t_stop*> stops;
+        QVector<t_bus*> buses;
         void claimStreets();
     };
 

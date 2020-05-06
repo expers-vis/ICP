@@ -176,19 +176,19 @@ void MainWindow::initSceneBuses(MyScene *scene) {
             /* assign to line */
             switch(bus->line_id) {
                 case 1:
-                    line1->buses->append(bus);
+                    line1->buses.append(bus);
                 break;
 
                 case 2:
-                    line2->buses->append(bus);
+                    line2->buses.append(bus);
                 break;
 
                 case 4:
-                    line4->buses->append(bus);
+                    line4->buses.append(bus);
                 break;
 
                 case 20:
-                    line20->buses->append(bus);
+                    line20->buses.append(bus);
                 break;
             }
         }
@@ -327,16 +327,16 @@ void MainWindow::highlight_line(t_line *line) {
     QVector<t_bus*>::iterator j;     // bus iterator
     QVector<t_stop*>::iterator k;        // bus stop iterator
 
-    for(i = line->streets->begin(); i != line->streets->end(); ++i) {
+    for(i = line->streets.begin(); i != line->streets.end(); ++i) {
         (*i)->obj->setPen(street_highlight);
         (*i)->obj->setZValue(1);
     }
-    for(j = line->buses->begin(); j != line->buses->end(); ++j) {
+    for(j = line->buses.begin(); j != line->buses.end(); ++j) {
         (*j)->obj->setPen(bus_pen_highlight);
         (*j)->obj->setBrush((bus_brush_highlight));
         (*j)->obj->setZValue(1);
     }
-    for(k = line->stops->begin(); k != line->stops->end(); k++) {
+    for(k = line->stops.begin(); k != line->stops.end(); k++) {
         (*k)->obj->setPen(stop_pen_highlight);
         (*k)->obj->setBrush(stop_brush_hightlight);
         (*j)->obj->setZValue(1);
@@ -348,16 +348,16 @@ void MainWindow::drop_highlight_line(t_line *line) {
     QVector<t_bus*>::iterator j;     // bus iterator
     QVector<t_stop*>::iterator k;        // bus stop iterator
 
-    for(i = line->streets->begin(); i != line->streets->end(); ++i) {
+    for(i = line->streets.begin(); i != line->streets.end(); ++i) {
         (*i)->obj->setPen(street_default);
         (*i)->obj->setZValue(0);
     }
-    for(j = line->buses->begin(); j != line->buses->end(); ++j) {
+    for(j = line->buses.begin(); j != line->buses.end(); ++j) {
         (*j)->obj->setPen(bus_pen_default);
         (*j)->obj->setBrush((bus_brush_default));
         (*j)->obj->setZValue(0);
     }
-    for(k = line->stops->begin(); k != line->stops->end(); k++) {
+    for(k = line->stops.begin(); k != line->stops.end(); k++) {
         (*k)->obj->setPen(stop_pen_default);
         (*k)->obj->setBrush(stop_brush_default);
         (*j)->obj->setZValue(0);
