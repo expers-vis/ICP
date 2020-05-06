@@ -7,7 +7,6 @@
 #include <QGraphicsScene>
 #include <QTimer>
 #include <QPropertyAnimation>
-#include <memory>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow;}
@@ -61,7 +60,26 @@ private:
         QVector<t_street*> streets;
         QVector<t_stop*> stops;
         QVector<t_bus*> buses;
-        void claimStreets();
+        void setId(int _id) {
+            t_line::id = _id;
+        };
+        void claimStreets(QVector<t_street*>*);
+        void claimStops(QVector<t_stop*>*);
+        ~t_line() {
+            QVector<t_street*>::iterator i;
+            QVector<t_bus*>::iterator j;
+            QVector<t_stop*>::iterator k;
+
+            for(i = t_line::streets.begin(); i != t_line::streets.end(); ++i) {
+                delete (*i);
+            }
+            for(j = t_line::buses.begin(); j != t_line::buses.end(); ++j) {
+                delete (*i);
+            }
+            for(k = t_line::stops.begin(); k != t_line::stops.end(); k++) {
+                delete (*i);
+            }
+        }
     };
 
     QVector<t_street*> *street_list;

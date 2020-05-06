@@ -60,7 +60,6 @@ void MainWindow::initScene()
     ui->graphicsView->setScene(scene);
 
     /* render background */
-    qDebug() << QCoreApplication::applicationDirPath();
     auto bg_img = QPixmap(QCoreApplication::applicationDirPath() + "/original.png", "png", Qt::AutoColor);     // load image
     bg_img = bg_img.scaledToWidth(400, Qt::TransformationMode::FastTransformation);
     bg_img = bg_img.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
@@ -71,10 +70,16 @@ void MainWindow::initScene()
     street_list = new QVector<t_street*>;
     stop_list = new QVector<t_stop*>;
 
+    /* create line containers and set their id */
     line1 = new t_line;
     line2 = new t_line;
     line4 = new t_line;
     line20 = new t_line;
+
+    line1->setId(1);
+    line2->setId(2);
+    line4->setId(4);
+    line20->setId(20);
 
     /* render street lines */
     initSceneStreets(scene);
@@ -84,6 +89,7 @@ void MainWindow::initScene()
 
     /* render bus icons */
     initSceneBuses(scene);
+
 }
 
 void MainWindow::initSceneStreets(MyScene* scene) {
@@ -118,6 +124,12 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     }
 
     file.close();
+
+    /* load streets into their lines */
+    line1->claimStreets(street_list);
+    line2->claimStreets(street_list);
+    line4->claimStreets(street_list);
+    line20->claimStreets(street_list);
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
@@ -150,6 +162,12 @@ void MainWindow::initSceneStops(MyScene *scene) {
     }
 
     file.close();
+
+    /* load stops into their lines */
+    line1->claimStops(stop_list);
+    line2->claimStops(stop_list);
+    line4->claimStops(stop_list);
+    line20->claimStops(stop_list);
 }
 
 void MainWindow::initSceneBuses(MyScene *scene) {
@@ -189,6 +207,9 @@ void MainWindow::initSceneBuses(MyScene *scene) {
 
                 case 20:
                     line20->buses.append(bus);
+                break;
+
+            default:
                 break;
             }
         }
@@ -339,7 +360,7 @@ void MainWindow::highlight_line(t_line *line) {
     for(k = line->stops.begin(); k != line->stops.end(); k++) {
         (*k)->obj->setPen(stop_pen_highlight);
         (*k)->obj->setBrush(stop_brush_hightlight);
-        (*j)->obj->setZValue(1);
+        //(*j)->obj->setZValue(1);
     }
 }
 
@@ -360,7 +381,7 @@ void MainWindow::drop_highlight_line(t_line *line) {
     for(k = line->stops.begin(); k != line->stops.end(); k++) {
         (*k)->obj->setPen(stop_pen_default);
         (*k)->obj->setBrush(stop_brush_default);
-        (*j)->obj->setZValue(0);
+        //(*j)->obj->setZValue(0);
     }
 }
 
@@ -408,7 +429,7 @@ void MainWindow::timerAction(){
     }
 }
 
-void MainWindow::t_line::claimStreets() {
+void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
     /* claim streets */
     QFile file("lines.txt");      // filename
     QString line;
@@ -422,10 +443,68 @@ void MainWindow::t_line::claimStreets() {
             QStringList list = line.split(" ");
 
             if(t_line::id == QString(list.at(0).toLocal8Bit().constData()).toInt()) {
-                QStringList::iterator i = list.begin();
-                /*while(i != list.end()) {
-                    MainWindow::street_list->
-                }*/
+                /* load from this line */
+
+                for(int i = 1; i != list.size(); i++) {
+                    /* find street name in street list */
+                    QString name = list.at(i);
+
+                    QVector<t_street*>::iterator j;
+                    for(j = street_list->begin(); j != street_list->end(); j++) {
+                        if((*j)->name == name) {
+                            t_line::streets.append((*j));
+                            break;
+                        }
+                    }
+                }
+
+                /* loading complete */
+                file.close();
+                return;
+            }
+        }
+
+    }
+    else{
+        QMessageBox::information(0,"info",file.errorString());
+        exit(1);
+    }
+
+    file.close();
+}
+
+void MainWindow::t_line::claimStops(QVector<t_stop*>* stop_list) {
+    /* claim streets */
+    QFile file("stops_info.txt");      // filename
+    QString line;
+
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&file);
+
+        while (!stream.atEnd()){
+
+            line = stream.readLine();
+            QStringList list = line.split(" ");
+
+            if(t_line::id == QString(list.at(0).toLocal8Bit().constData()).toInt()) {
+                /* load from this line */
+
+                for(int i = 1; i != list.size(); i++) {
+                    /* find stop name in street list */
+                    QString name = list.at(i);
+
+                    QVector<t_stop*>::iterator j;
+                    for(j = stop_list->begin(); j != stop_list->end(); j++) {
+                        if((*j)->name == name) {
+                            t_line::stops.append((*j));
+                            break;
+                        }
+                    }
+                }
+
+                /* loading complete */
+                file.close();
+                return;
             }
         }
 
