@@ -13,6 +13,7 @@
 #include <QMessageBox>
 #include <myscene.h>
 #include <QDebug>
+#include <math.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -195,7 +196,7 @@ void MainWindow::initSceneBuses(MyScene *scene) {
             double y = QString(list.at(2).toLocal8Bit().constData()).toDouble();
 
 
-            bus->obj = scene->addEllipse(x, y, 10, 10, bus_pen_default, bus_brush_default);
+            bus->obj = scene->addEllipse(x-5, y-5, 10, 10, bus_pen_default, bus_brush_default);
             bus->line_id = QString(list.at(0).toLocal8Bit().constData()).toInt();
 
             /* assign to line */
@@ -538,8 +539,70 @@ void MainWindow::t_line::makeRoute() {
 }
 
 void MainWindow::t_bus::move(QVector<QPointF> route) {
-    /*static int c_pos = 0;   // current position in route vector
+   /*static int c_pos = 0;   // current position in route vector
 
     c_pos = (c_pos + 1) % route.size();
     t_bus::obj->setPos(route[c_pos]);*/
+    static QPointF bus = route[0];
+    static QPointF point = route[1];
+    static int point_i = 1;
+    int x_pol = 1;
+    int y_pol = 1;
+
+    if(route[point_i].x()<= bus.x() && route[point_i].y() <= bus.y()){
+        x_pol = -1;
+        y_pol = -1;
+    }
+    else if(route[point_i].x()>= bus.x() && route[point_i].y() <= bus.y()){
+        x_pol = 1;
+        y_pol = -1;
+    }
+    else if(route[point_i].x()>= bus.x() && route[point_i].y() >= bus.y()){
+        x_pol = 1;
+        y_pol = 1;
+    }
+    else if(route[point_i].x()<= bus.x() && route[point_i].y() >= bus.y()){
+        x_pol = -1;
+        y_pol = 1;
+    }
+    else if(route[point_i].x() == bus.x() && route[point_i].y() >= bus.y()){
+        x_pol = 1;
+        y_pol = 1;
+    }
+    else if(route[point_i].x() == bus.x() && route[point_i].y() <= bus.y()){
+        x_pol = -1;
+        y_pol = 1;
+    }
+    else if(route[point_i].x() <= bus.x() && route[point_i].y() == bus.y()){
+        x_pol = -1;
+        y_pol = 1;
+    }
+    else if(route[point_i].x() >= bus.x() && route[point_i].y() == bus.y()){
+        x_pol = 1;
+        y_pol = 1;
+    }
+
+
+    float x;
+    float y;
+    float length;
+
+    x = abs(bus.x() - point.x());
+    y = abs(bus.y() - point.y());
+
+
+    length = sqrt(x*x + y*y);
+
+    t_bus::obj->moveBy(1/(x_pol*(length/x)),1/(y_pol*(length/y)));
+
+    bus += QPointF(1/(x_pol*(length/x)),1/(y_pol*(length/y)));
+
+
+    if(length <= 0.5){
+        point_i=(point_i+1)%route.size();
+        point = route[point_i];
+        qDebug() << point;
+    }
+
+
 }
