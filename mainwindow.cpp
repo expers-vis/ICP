@@ -130,6 +130,13 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     line2->claimStreets(street_list);
     line4->claimStreets(street_list);
     line20->claimStreets(street_list);
+
+    /* calculate routes */
+    line1->makeRoute();
+    QVector<QPointF>::iterator i;
+    for(i = line1->route.begin(); i != line1->route.end(); i++) {
+        auto p =scene->addEllipse((*i).x() - 1, (*i).y() - 1, 2, 2, bus_pen_highlight, bus_brush_highlight);
+    }
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
@@ -418,14 +425,10 @@ void MainWindow::showTimetable() {
 }
 
 void MainWindow::timerAction(){
-    static bool time = false;
+    QVector<t_bus*>::iterator i;
 
-    if(time) {
-        //ui->label->setPixmap(QPixmap("/home/xhiner00/Desktop/ICP/original", "png", Qt::AutoColor));
-        time = false;
-    } else {
-        //ui->label->setPixmap(QPixmap("/home/xhiner00/Desktop/ICP/boof", nullptr, Qt::AutoColor));
-        time = true;
+    for(i = line1->buses.begin(); i != line1->buses.end(); i++) {
+        (*i)->move(line1->route);
     }
 }
 
@@ -515,4 +518,28 @@ void MainWindow::t_line::claimStops(QVector<t_stop*>* stop_list) {
     }
 
     file.close();
+}
+
+void MainWindow::t_line::makeRoute() {
+    QVector<t_street*>::iterator i;
+
+    /* insert start and end points into set to remove duplicates */
+    for(i = t_line::streets.begin(); i != t_line::streets.end(); i++) {
+        auto line_obj = (*i)->obj->line();      //get line object of street
+
+        if(!t_line::route.isEmpty()) {
+            if(t_line::route.last() != line_obj.p1()) {
+                t_line::route.append(line_obj.p1());
+            }
+        }
+        t_line::route.append(line_obj.p2());
+    }
+
+}
+
+void MainWindow::t_bus::move(QVector<QPointF> route) {
+    /*static int c_pos = 0;   // current position in route vector
+
+    c_pos = (c_pos + 1) % route.size();
+    t_bus::obj->setPos(route[c_pos]);*/
 }

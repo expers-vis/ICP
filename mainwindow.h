@@ -52,6 +52,7 @@ private:
     struct t_bus {
         int line_id;        // id of line it belongs to
         QGraphicsEllipseItem *obj;
+        void move(QVector<QPointF>);
     };
 
     /* visual line objects */
@@ -60,11 +61,13 @@ private:
         QVector<t_street*> streets;
         QVector<t_stop*> stops;
         QVector<t_bus*> buses;
+        QVector<QPointF> route;
         void setId(int _id) {
             t_line::id = _id;
         };
         void claimStreets(QVector<t_street*>*);
         void claimStops(QVector<t_stop*>*);
+        void makeRoute();
         ~t_line() {
             QVector<t_street*>::iterator i;
             QVector<t_bus*>::iterator j;
