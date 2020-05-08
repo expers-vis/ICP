@@ -1,0 +1,4 @@
+1 Sumracna_1 Sumracna_2 Modra Zelena Ranna
+2 Nivy Koleso Sumracna_2 Sumracna_1 Dobogan Blazena Severna
+4 Martinska Maticna Koleso Zelena  Krizna_3
+20 Koleso Sumracna_1 Sumracna_2 Krizna_2 Krizna_3 Blazena Ranna

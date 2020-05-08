@@ -94,7 +94,7 @@ void MainWindow::initScene()
 }
 
 void MainWindow::initSceneStreets(MyScene* scene) {
-    QFile file("streets.txt");      // filename
+    QFile file("data/streets.txt");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -144,7 +144,7 @@ void MainWindow::initSceneStreets(MyScene* scene) {
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
-    QFile file("stops.txt");      // filename
+    QFile file("data/stops.txt");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -182,7 +182,7 @@ void MainWindow::initSceneStops(MyScene *scene) {
 }
 
 void MainWindow::initSceneBuses(MyScene *scene) {
-    QFile file("buses.txt");      // filename
+    QFile file("data/buses.txt");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -472,7 +472,7 @@ void MainWindow::timerAction(){
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
     /* claim streets */
-    QFile file("lines.txt");      // filename
+    QFile file("data/lines.txt");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -516,7 +516,7 @@ void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
 
 void MainWindow::t_line::claimStops(QVector<t_stop*>* stop_list) {
     /* claim streets */
-    QFile file("stops_info.txt");      // filename
+    QFile file("data/stops_info.txt");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
