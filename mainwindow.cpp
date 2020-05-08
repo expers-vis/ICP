@@ -456,12 +456,18 @@ void MainWindow::showTimetable() {
 void MainWindow::timerAction(){
     QVector<t_bus*>::iterator i;
 
-    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+    /*for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1->route);
-    }
+    }*/
     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         (*i)->move(line2->route);
+    }/*
+    for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
+        (*i)->move(line4->route);
     }
+    for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
+        (*i)->move(line20->route);
+    }*/
 }
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
@@ -644,6 +650,12 @@ void MainWindow::t_bus::move(QVector<QPointF> route) {
     /* calculate where to move in each axis */
     float x_coef = 1/(x_pol*(length/x));
     float y_coef = 1/(y_pol*(length/y));
+
+    /* zero division correction */
+    if(length == 0) {
+        x_coef = 0;
+        y_coef = 0;
+    }
 
     t_bus::obj->moveBy(x_coef , y_coef);    // move in scene
 
