@@ -39,6 +39,8 @@ private:
     QBrush bus_brush_default;
     QBrush bus_brush_highlight;
 
+    struct t_line;
+
     struct t_street {
         QString name;
         QGraphicsLineItem *obj;
@@ -57,7 +59,7 @@ private:
         QPointF dest;       // point the bus is moving to
         int idx;            // index in route vector
         bool init = true;   // let the bus lead its position and route
-        void move(QVector<QPointF>);
+        void move(t_line*);
     };
 
     /* visual line objects */

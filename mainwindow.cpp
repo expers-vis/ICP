@@ -456,18 +456,18 @@ void MainWindow::showTimetable() {
 void MainWindow::timerAction(){
     QVector<t_bus*>::iterator i;
 
-    /*for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
-        (*i)->move(line1->route);
-    }*/
+    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+        (*i)->move(line1);
+    }
     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
-        (*i)->move(line2->route);
-    }/*
+        (*i)->move(line2);
+    }
     for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
-        (*i)->move(line4->route);
+        (*i)->move(line4);
     }
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
-        (*i)->move(line20->route);
-    }*/
+        (*i)->move(line20);
+    }
 }
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
@@ -591,11 +591,11 @@ void MainWindow::t_line::makeRoute() {
     }
 }
 
-void MainWindow::t_bus::move(QVector<QPointF> route) {
+void MainWindow::t_bus::move(t_line * line) {
     /* initialize route info */
     if(t_bus::init) {
-        t_bus::c_pos = route[0];
-        t_bus::dest = route[1];
+        t_bus::c_pos = line->route[0];
+        t_bus::dest = line->route[1];
         t_bus::idx = 1;
         t_bus::init = false;
     }
@@ -609,35 +609,35 @@ void MainWindow::t_bus::move(QVector<QPointF> route) {
     int x_pol = 1;
     int y_pol = 1;
 
-    if(route[idx].x()<= c_pos.x() && route[idx].y() <= c_pos.y()){
+    if(line->route[idx].x()<= c_pos.x() && line->route[idx].y() <= c_pos.y()){
         x_pol = -1;
         y_pol = -1;
     }
-    else if(route[idx].x()>= c_pos.x() && route[idx].y() <= c_pos.y()){
+    else if(line->route[idx].x()>= c_pos.x() && line->route[idx].y() <= c_pos.y()){
         x_pol = 1;
         y_pol = -1;
     }
-    else if(route[idx].x()>= c_pos.x() && route[idx].y() >= c_pos.y()){
+    else if(line->route[idx].x()>= c_pos.x() && line->route[idx].y() >= c_pos.y()){
         x_pol = 1;
         y_pol = 1;
     }
-    else if(route[idx].x()<= c_pos.x() && route[idx].y() >= c_pos.y()){
+    else if(line->route[idx].x()<= c_pos.x() && line->route[idx].y() >= c_pos.y()){
         x_pol = -1;
         y_pol = 1;
     }
-    else if(route[idx].x() == c_pos.x() && route[idx].y() >= c_pos.y()){
+    else if(line->route[idx].x() == c_pos.x() && line->route[idx].y() >= c_pos.y()){
         x_pol = 1;
         y_pol = 1;
     }
-    else if(route[idx].x() == c_pos.x() && route[idx].y() <= c_pos.y()){
+    else if(line->route[idx].x() == c_pos.x() && line->route[idx].y() <= c_pos.y()){
         x_pol = -1;
         y_pol = 1;
     }
-    else if(route[idx].x() <= c_pos.x() && route[idx].y() == c_pos.y()){
+    else if(line->route[idx].x() <= c_pos.x() && line->route[idx].y() == c_pos.y()){
         x_pol = -1;
         y_pol = 1;
     }
-    else if(route[idx].x() >= c_pos.x() && route[idx].y() == c_pos.y()){
+    else if(line->route[idx].x() >= c_pos.x() && line->route[idx].y() == c_pos.y()){
         x_pol = 1;
         y_pol = 1;
     }
@@ -663,8 +663,8 @@ void MainWindow::t_bus::move(QVector<QPointF> route) {
 
     /* if destination is reached, set a next one */
     if(length <= 0.5){
-        idx=(idx+1)%route.size();
-        dest = route[idx];
+        idx=(idx + 1) % line->route.size();
+        dest = line->route[idx];
         //qDebug() << dest << " next index: " << idx;
     }
 

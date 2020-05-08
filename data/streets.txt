@@ -29,7 +29,7 @@ jankovska 50 100 30 100
 lidlova 30 100 30 40
 dlha 30 40 280 40
 javorova 280 40 280 60
-martinska 30 100 30 230
+martinska 30 230 30 100
 maticna 30 230 100 230
 kotolna 100 230 100 300
 vodna 100 300 120 380
