@@ -69,18 +69,10 @@ private:
         void claimStops(QVector<t_stop*>*);
         void makeRoute();
         ~t_line() {
-            QVector<t_street*>::iterator i;
             QVector<t_bus*>::iterator j;
-            QVector<t_stop*>::iterator k;
 
-            for(i = t_line::streets.begin(); i != t_line::streets.end(); ++i) {
-                delete (*i);
-            }
             for(j = t_line::buses.begin(); j != t_line::buses.end(); ++j) {
-                delete (*i);
-            }
-            for(k = t_line::stops.begin(); k != t_line::stops.end(); k++) {
-                delete (*i);
+                delete (*j);
             }
         }
     };

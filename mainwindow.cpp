@@ -134,10 +134,13 @@ void MainWindow::initSceneStreets(MyScene* scene) {
 
     /* calculate routes */
     line1->makeRoute();
-    QVector<QPointF>::iterator i;
+    line2->makeRoute();
+    line4->makeRoute();
+    line20->makeRoute();
+    /*QVector<QPointF>::iterator i;
     for(i = line1->route.begin(); i != line1->route.end(); i++) {
         auto p =scene->addEllipse((*i).x() - 1, (*i).y() - 1, 2, 2, bus_pen_highlight, bus_brush_highlight);
-    }
+    }*/
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
@@ -236,7 +239,7 @@ void MainWindow::initTimer() {
     timer = new QTimer(this);
     timer->setSingleShot(false);    // explicit repeat
 
-    timer->start(1000);     //default 1 sec events
+    timer->start(100);     //default 1 sec events
 
     connect(timer, &QTimer::timeout,  this, &MainWindow::timerAction);
 }
@@ -365,10 +368,10 @@ void MainWindow::highlight_line(t_line *line) {
         (*j)->obj->setBrush((bus_brush_highlight));
         (*j)->obj->setZValue(1);
     }
-    for(k = line->stops.begin(); k != line->stops.end(); k++) {
+    for(k = line->stops.begin(); k != line->stops.end(); ++k) {
         (*k)->obj->setPen(stop_pen_highlight);
         (*k)->obj->setBrush(stop_brush_hightlight);
-        //(*j)->obj->setZValue(1);
+        (*k)->obj->setZValue(1);
     }
 }
 
@@ -386,10 +389,10 @@ void MainWindow::drop_highlight_line(t_line *line) {
         (*j)->obj->setBrush((bus_brush_default));
         (*j)->obj->setZValue(0);
     }
-    for(k = line->stops.begin(); k != line->stops.end(); k++) {
+    for(k = line->stops.begin(); k != line->stops.end(); ++k) {
         (*k)->obj->setPen(stop_pen_default);
         (*k)->obj->setBrush(stop_brush_default);
-        //(*j)->obj->setZValue(0);
+        (*k)->obj->setZValue(0);
     }
 }
 
@@ -428,7 +431,7 @@ void MainWindow::showTimetable() {
 void MainWindow::timerAction(){
     QVector<t_bus*>::iterator i;
 
-    for(i = line1->buses.begin(); i != line1->buses.end(); i++) {
+    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1->route);
     }
 }
@@ -454,7 +457,7 @@ void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
                     QString name = list.at(i);
 
                     QVector<t_street*>::iterator j;
-                    for(j = street_list->begin(); j != street_list->end(); j++) {
+                    for(j = street_list->begin(); j != street_list->end(); ++j) {
                         if((*j)->name == name) {
                             t_line::streets.append((*j));
                             break;
@@ -498,7 +501,7 @@ void MainWindow::t_line::claimStops(QVector<t_stop*>* stop_list) {
                     QString name = list.at(i);
 
                     QVector<t_stop*>::iterator j;
-                    for(j = stop_list->begin(); j != stop_list->end(); j++) {
+                    for(j = stop_list->begin(); j != stop_list->end(); ++j) {
                         if((*j)->name == name) {
                             t_line::stops.append((*j));
                             break;
@@ -525,17 +528,33 @@ void MainWindow::t_line::makeRoute() {
     QVector<t_street*>::iterator i;
 
     /* insert start and end points into set to remove duplicates */
-    for(i = t_line::streets.begin(); i != t_line::streets.end(); i++) {
-        auto line_obj = (*i)->obj->line();      //get line object of street
+    for(i = t_line::streets.begin(); i != t_line::streets.end(); ++i) {
+       auto line_obj = (*i)->obj->line();      //get line object of street
+       auto p1 = line_obj.p1();         // get first point of line
+       auto p2 = line_obj.p2();         // get second point of line
 
-        if(!t_line::route.isEmpty()) {
-            if(t_line::route.last() != line_obj.p1()) {
-                t_line::route.append(line_obj.p1());
-            }
-        }
-        t_line::route.append(line_obj.p2());
+       /* add only unique points */
+       if(!t_line::route.isEmpty()) {
+           if(t_line::route.indexOf(p1) == -1) {
+               t_line::route.append(line_obj.p1());
+           }
+       } else {
+           t_line::route.append(p2);
+       }
+       if(!t_line::route.isEmpty()) {
+           if(t_line::route.indexOf(p2) == -1) {
+               t_line::route.append(p2);
+           }
+       }
     }
 
+    /* add last point */
+    auto line_obj = t_line::streets[t_line::streets.size() - 1]->obj->line();
+    if(t_line::route.last() == line_obj.p1()) {
+        t_line::route.append(line_obj.p2());
+    } else {
+        t_line::route.append(line_obj.p1());
+    }
 }
 
 void MainWindow::t_bus::move(QVector<QPointF> route) {
@@ -601,7 +620,7 @@ void MainWindow::t_bus::move(QVector<QPointF> route) {
     if(length <= 0.5){
         point_i=(point_i+1)%route.size();
         point = route[point_i];
-        qDebug() << point;
+        qDebug() << point << " next index: " << point_i;
     }
 
 
