@@ -137,10 +137,10 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     line2->makeRoute();
     line4->makeRoute();
     line20->makeRoute();
-    /*QVector<QPointF>::iterator i;
-    for(i = line1->route.begin(); i != line1->route.end(); i++) {
+    QVector<QPointF>::iterator i;
+    for(i = line2->route.begin(); i != line2->route.end(); i++) {
         auto p =scene->addEllipse((*i).x() - 1, (*i).y() - 1, 2, 2, bus_pen_highlight, bus_brush_highlight);
-    }*/
+    }
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
@@ -195,12 +195,13 @@ void MainWindow::initSceneBuses(MyScene *scene) {
 
             t_bus *bus = new t_bus;
 
-            double x = QString(list.at(1).toLocal8Bit().constData()).toDouble();
-            double y = QString(list.at(2).toLocal8Bit().constData()).toDouble();
+            double x = QString(list.at(2).toLocal8Bit().constData()).toDouble();
+            double y = QString(list.at(3).toLocal8Bit().constData()).toDouble();
 
 
             bus->obj = scene->addEllipse(x-5, y-5, 10, 10, bus_pen_default, bus_brush_default);
             bus->line_id = QString(list.at(0).toLocal8Bit().constData()).toInt();
+            bus->delay = QString(list.at(1).toLocal8Bit().constData()).toInt();
 
             /* assign to line */
             switch(bus->line_id) {
@@ -405,24 +406,48 @@ void MainWindow::showTimetable() {
             qDebug() << "Printing info 1\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 1 Timetable");
+
+            /* inform window which line to display */
+            connect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+            emit timetableNumber(curr_line);
+            disconnect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+
             timetableObj->show();
         break;
         case 2:
             qDebug() << "Printing info 2\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 2 Timetable");
+
+            /* inform window which line to display */
+            connect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+            emit timetableNumber(curr_line);
+            disconnect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+
             timetableObj->show();
         break;
         case 3:
             qDebug() << "Printing info 4\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 4 Timetable");
+
+            /* inform window which line to display */
+            connect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+            emit timetableNumber(curr_line);
+            disconnect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+
             timetableObj->show();
         break;
         case 4:
             qDebug() << "Printing info 20\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 20 Timetable");
+
+            /* inform window which line to display */
+            connect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+            emit timetableNumber(curr_line);
+            disconnect(this, SIGNAL(timetableNumber(int)), timetableObj, SLOT(recieveTimetable(int)));
+
             timetableObj->show();
         break;
     }
@@ -433,6 +458,9 @@ void MainWindow::timerAction(){
 
     for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1->route);
+    }
+    for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
+        (*i)->move(line2->route);
     }
 }
 
@@ -558,69 +586,74 @@ void MainWindow::t_line::makeRoute() {
 }
 
 void MainWindow::t_bus::move(QVector<QPointF> route) {
-   /*static int c_pos = 0;   // current position in route vector
+    /* initialize route info */
+    if(t_bus::init) {
+        t_bus::c_pos = route[0];
+        t_bus::dest = route[1];
+        t_bus::idx = 1;
+        t_bus::init = false;
+    }
 
-    c_pos = (c_pos + 1) % route.size();
-    t_bus::obj->setPos(route[c_pos]);*/
-    static QPointF bus = route[0];
-    static QPointF point = route[1];
-    static int point_i = 1;
+    /* wait out delay */
+    if(delay > 0) {
+        delay--;
+        return;
+    }
+
     int x_pol = 1;
     int y_pol = 1;
 
-    if(route[point_i].x()<= bus.x() && route[point_i].y() <= bus.y()){
+    if(route[idx].x()<= c_pos.x() && route[idx].y() <= c_pos.y()){
         x_pol = -1;
         y_pol = -1;
     }
-    else if(route[point_i].x()>= bus.x() && route[point_i].y() <= bus.y()){
+    else if(route[idx].x()>= c_pos.x() && route[idx].y() <= c_pos.y()){
         x_pol = 1;
         y_pol = -1;
     }
-    else if(route[point_i].x()>= bus.x() && route[point_i].y() >= bus.y()){
+    else if(route[idx].x()>= c_pos.x() && route[idx].y() >= c_pos.y()){
         x_pol = 1;
         y_pol = 1;
     }
-    else if(route[point_i].x()<= bus.x() && route[point_i].y() >= bus.y()){
+    else if(route[idx].x()<= c_pos.x() && route[idx].y() >= c_pos.y()){
         x_pol = -1;
         y_pol = 1;
     }
-    else if(route[point_i].x() == bus.x() && route[point_i].y() >= bus.y()){
+    else if(route[idx].x() == c_pos.x() && route[idx].y() >= c_pos.y()){
         x_pol = 1;
         y_pol = 1;
     }
-    else if(route[point_i].x() == bus.x() && route[point_i].y() <= bus.y()){
+    else if(route[idx].x() == c_pos.x() && route[idx].y() <= c_pos.y()){
         x_pol = -1;
         y_pol = 1;
     }
-    else if(route[point_i].x() <= bus.x() && route[point_i].y() == bus.y()){
+    else if(route[idx].x() <= c_pos.x() && route[idx].y() == c_pos.y()){
         x_pol = -1;
         y_pol = 1;
     }
-    else if(route[point_i].x() >= bus.x() && route[point_i].y() == bus.y()){
+    else if(route[idx].x() >= c_pos.x() && route[idx].y() == c_pos.y()){
         x_pol = 1;
         y_pol = 1;
     }
 
+    /* get length of route */
+    float x = abs(c_pos.x() - dest.x());
+    float y = abs(c_pos.y() - dest.y());
+    float length = sqrt(x*x + y*y);
 
-    float x;
-    float y;
-    float length;
+    /* calculate where to move in each axis */
+    float x_coef = 1/(x_pol*(length/x));
+    float y_coef = 1/(y_pol*(length/y));
 
-    x = abs(bus.x() - point.x());
-    y = abs(bus.y() - point.y());
+    t_bus::obj->moveBy(x_coef , y_coef);    // move in scene
 
+    c_pos += QPointF(x_coef, y_coef);       // actualise current position
 
-    length = sqrt(x*x + y*y);
-
-    t_bus::obj->moveBy(1/(x_pol*(length/x)),1/(y_pol*(length/y)));
-
-    bus += QPointF(1/(x_pol*(length/x)),1/(y_pol*(length/y)));
-
-
+    /* if destination is reached, set a next one */
     if(length <= 0.5){
-        point_i=(point_i+1)%route.size();
-        point = route[point_i];
-        qDebug() << point << " next index: " << point_i;
+        idx=(idx+1)%route.size();
+        dest = route[idx];
+        //qDebug() << dest << " next index: " << idx;
     }
 
 

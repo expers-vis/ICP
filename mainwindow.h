@@ -51,7 +51,12 @@ private:
 
     struct t_bus {
         int line_id;        // id of line it belongs to
+        int delay;          // delay starting of the bus, in timer ticks
         QGraphicsEllipseItem *obj;
+        QPointF c_pos;      // current position of the bus
+        QPointF dest;       // point the bus is moving to
+        int idx;            // index in route vector
+        bool init = true;   // let the bus lead its position and route
         void move(QVector<QPointF>);
     };
 
@@ -106,5 +111,8 @@ private slots:
     void speedNorm();
     void highlight(int);
     void showTimetable();
+
+signals:
+    void timetableNumber(int);
 };
 #endif // MAINWINDOW_H
