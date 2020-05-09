@@ -61,6 +61,7 @@ private:
         int idx;            // index in route vector
         bool init = true;   // let the bus lead its position and route
         void move(t_line*);
+        int ign = 0;
     };
 
     /* visual line objects */

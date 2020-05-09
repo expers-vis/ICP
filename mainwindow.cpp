@@ -457,18 +457,18 @@ void MainWindow::showTimetable() {
 void MainWindow::timerAction(){
     QVector<t_bus*>::iterator i;
 
-    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+  /*  for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1);
-    }
+    }*/
     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         (*i)->move(line2);
     }
-    for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
+    /*for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
         (*i)->move(line4);
     }
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
         (*i)->move(line20);
-    }
+    }*/
 }
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
@@ -643,6 +643,22 @@ void MainWindow::t_bus::move(t_line * line) {
         y_pol = 1;
     }
 
+   if(ign == 0){
+    for(int i=0;i<line->stops.size();i++){
+        float x_deff = abs(c_pos.x()-line->stops[i]->pos.x()-5);
+        float y_deff = abs(c_pos.y()-line->stops[i]->pos.y()-5);
+        qDebug() << "x: " << x_deff << " y: " << y_deff;
+        qDebug() << line->stops[i]->pos;
+        if(x_deff <= 1 && y_deff <= 1){
+            delay = 50;
+            ign = 5;
+        }
+    }
+   }
+   else{
+       ign--;
+   }
+
     /* get length of route */
     float x = abs(c_pos.x() - dest.x());
     float y = abs(c_pos.y() - dest.y());
@@ -663,7 +679,7 @@ void MainWindow::t_bus::move(t_line * line) {
     c_pos += QPointF(x_coef, y_coef);       // actualise current position
 
     /* if destination is reached, set a next one */
-    if(length <= 0.5){
+    if(length <= 0.9){
         idx=(idx + 1) % line->route.size();
         dest = line->route[idx];
         //qDebug() << dest << " next index: " << idx;
