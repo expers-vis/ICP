@@ -1,15 +1,5 @@
-maticna 
-martinska 
-jankovska 
-dobogan_1 
-spojna 
-fialova 
-zelena 
-masna 
-uholna 
-krizna_3 
-marianska 
-koleso_2 
-dobra 
-krizna_1
-
+Martinska 0
+Maticna 125
+Koleso 476
+Zelena 747
+Krizna_3 920

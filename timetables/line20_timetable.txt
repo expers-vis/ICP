@@ -1,8 +1,7 @@
-Nivy 0
-Koleso 75
-Sumracna_2 387
-Sumracna_1 527
-Dobogan 653
-Blazena 838
-Severna 939
-Martinska 1061
+Koleso 0
+Sumracna_1 126
+Sumracna_2 266
+Krizna_2 478
+Krizna_3 659
+Blazena 851
+Ranna 921

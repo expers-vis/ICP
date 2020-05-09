@@ -1,11 +1,5 @@
-prava 00:00
-lava 00:20
-vodna 00:50
-kotolna 01:10
-modra 01:20
-fialova 01:40
-zelena 02:00
-masna 02:10
-sumracna 02:25
-ranna 03:00
-
+Sumracna_1 0
+Sumracna_2 307
+Modra 473
+Zelena 614
+Ranna 754
