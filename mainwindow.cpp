@@ -92,10 +92,10 @@ void MainWindow::initScene()
     /* render bus icons */
     initSceneBuses(scene);
 
-    line1->get_time_table("line1_timetable.txt");
-    line2->get_time_table("line2_timetable.txt");
-    //line4->get_time_table("line4_timetable.txt");
-    //line20->get_time_table("line20_timetable.txt");
+    //line1->getTimetable("line1_timetable.txt");
+    line2->getTimetable("line2_timetable.txt");
+    //line4->getTimetable("line4_timetable.txt");
+    //line20->getTime_able("line20_timetable.txt");
 
 
 
@@ -466,11 +466,12 @@ void MainWindow::showTimetable() {
 }
 
 void MainWindow::timerAction(){
+    /* move the busses */
     QVector<t_bus*>::iterator i;
 
-   for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+   /*for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1,time);
-    }
+    }*/
     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         (*i)->move(line2,time);
     }
@@ -480,10 +481,25 @@ void MainWindow::timerAction(){
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
         (*i)->move(line20,time);
     }*/
+
+    /* forward time */
     time++;
+
+    /* print time */
+    QString tm = formatTime(time);
+    ui->timeDisplay->setText(tm);
 }
 
-void MainWindow::t_line::get_time_table(QString filename)
+inline QString MainWindow::formatTime(long int sec) {
+    int hour = sec / 3600;
+    sec = sec % 3600;
+    int min = sec / 60;
+    sec = sec % 60;
+
+    return QString().sprintf("%02d:%02d:%02ld", hour, min, sec);
+}
+
+void MainWindow::t_line::getTimetable(QString filename)
 {
     QFile file("timetables/" + filename);      // filename
     QString line;
@@ -495,10 +511,14 @@ void MainWindow::t_line::get_time_table(QString filename)
             line = stream.readLine();
             QStringList list = line.split(" ");
 
-            time_table.append(QString(list.at(1).toLocal8Bit().constData()).toInt());
+            timetable.append(QString(list.at(1).toLocal8Bit().constData()).toInt());
         }
+    } else {
+        QMessageBox::information(0,"info",file.errorString());
+        exit(1);
+    }
 
-}
+    file.close();
 }
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
@@ -536,8 +556,7 @@ void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
             }
         }
 
-    }
-    else{
+    } else {
         QMessageBox::information(0,"info",file.errorString());
         exit(1);
     }
@@ -672,13 +691,14 @@ void MainWindow::t_bus::move(t_line * line, int time) {
             /* calculate length to stop */
             double length = QLineF(c_pos.x(),c_pos.y(),line->stops[i]->pos.x(),line->stops[i]->pos.y()).length();
 
+            /* stop if nearby stop */
             if(length <= 1.5){
 
-                delay = start_delay + line->time_table[stop_num] - time;
-                qDebug() <<"delay: " << delay;
-                qDebug() << time;
-                ign = 5;
-                stop_num = (stop_num+1)%line->time_table.size();
+                delay = start_delay + line->timetable[stop_num] - time;
+                //qDebug() <<"delay: " << delay;
+                //qDebug() << time;
+                ign = 5;    // guard againt stopping againt on the same stop
+                stop_num = (stop_num+1)%line->timetable.size();
             }
         }
     } else {

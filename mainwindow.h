@@ -6,7 +6,6 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QTimer>
-#include <QPropertyAnimation>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow;}
@@ -24,7 +23,8 @@ private:
     Ui::MainWindow *ui;
     timetableDisplay *timetableObj;
     QTimer *timer;
-    int time = 0;
+    long int time = 0;   // run time of application
+
     /* graphic options */
     QPen street_default;
     QPen street_highlight;
@@ -55,6 +55,8 @@ private:
     struct t_bus {
         int line_id;        // id of line it belongs to
         int delay;          // delay starting of the bus, in timer ticks
+        int stop_num = 0;   // how many stops passed
+        int start_delay;    // initial delay of starting bus
         QGraphicsEllipseItem *obj;
         QPointF c_pos;      // current position of the bus
         QPointF dest;       // point the bus is moving to
@@ -62,8 +64,6 @@ private:
         bool init = true;   // let the bus lead its position and route
         void move(t_line*, int);
         int ign = 0;
-        int stop_num = 0;
-        int start_delay;
     };
 
     /* visual line objects */
@@ -73,13 +73,13 @@ private:
         QVector<t_stop*> stops;
         QVector<t_bus*> buses;
         QVector<QPointF> route;
-        QVector<int> time_table;
-        void get_time_table(QString);
+        QVector<int> timetable;
         void setId(int _id) {
             t_line::id = _id;
         };
         void claimStreets(QVector<t_street*>*);
         void claimStops(QVector<t_stop*>*);
+        void getTimetable(QString);
         void makeRoute();
         ~t_line() {
             QVector<t_bus*>::iterator j;
@@ -108,6 +108,7 @@ private:
     void initSelectBox();
     void highlight_line(t_line*);
     void drop_highlight_line(t_line*);
+    inline QString formatTime(long int);
 
 private slots:
     void zoomin();
@@ -123,4 +124,5 @@ private slots:
 signals:
     void timetableNumber(int);
 };
+
 #endif // MAINWINDOW_H
