@@ -162,6 +162,7 @@ void MainWindow::initSceneStops(MyScene *scene) {
 
             stop->obj = scene->addRect(x, y, 10, 10, stop_pen_default, stop_brush_default);
             stop->name = list.at(0).toLocal8Bit().constData();
+            stop->pos = QPointF(x, y);
 
             stop_list->append(stop);
         }

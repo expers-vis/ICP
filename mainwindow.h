@@ -48,6 +48,7 @@ private:
 
     struct t_stop {
         QString name;
+        QPointF pos;
         QGraphicsRectItem *obj;
     };
 
