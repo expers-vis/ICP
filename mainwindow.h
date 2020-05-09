@@ -24,7 +24,7 @@ private:
     Ui::MainWindow *ui;
     timetableDisplay *timetableObj;
     QTimer *timer;
-
+    int time = 0;
     /* graphic options */
     QPen street_default;
     QPen street_highlight;
@@ -60,8 +60,10 @@ private:
         QPointF dest;       // point the bus is moving to
         int idx;            // index in route vector
         bool init = true;   // let the bus lead its position and route
-        void move(t_line*);
+        void move(t_line*, int);
         int ign = 0;
+        int stop_num = 0;
+        int start_delay;
     };
 
     /* visual line objects */
@@ -71,6 +73,8 @@ private:
         QVector<t_stop*> stops;
         QVector<t_bus*> buses;
         QVector<QPointF> route;
+        QVector<int> time_table;
+        void get_time_table(QString);
         void setId(int _id) {
             t_line::id = _id;
         };
