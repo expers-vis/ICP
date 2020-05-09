@@ -7,7 +7,6 @@
 #include "timetabledisplay.h"
 #include "ui_mainwindow.h"
 #include <QGraphicsLineItem>
-#include <QGraphicsTextItem>
 #include <QTimer>
 #include <QFile>
 #include <QMessageBox>
@@ -457,18 +456,18 @@ void MainWindow::showTimetable() {
 void MainWindow::timerAction(){
     QVector<t_bus*>::iterator i;
 
-  /*  for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1);
-    }*/
+    }
     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         (*i)->move(line2);
     }
-    /*for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
+    for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
         (*i)->move(line4);
     }
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
         (*i)->move(line20);
-    }*/
+    }
 }
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
@@ -643,21 +642,21 @@ void MainWindow::t_bus::move(t_line * line) {
         y_pol = 1;
     }
 
-   if(ign == 0){
-    for(int i=0;i<line->stops.size();i++){
-        float x_deff = abs(c_pos.x()-line->stops[i]->pos.x()-5);
-        float y_deff = abs(c_pos.y()-line->stops[i]->pos.y()-5);
-        qDebug() << "x: " << x_deff << " y: " << y_deff;
-        qDebug() << line->stops[i]->pos;
-        if(x_deff <= 1 && y_deff <= 1){
-            delay = 50;
-            ign = 5;
+    /* stop@stop */
+    if(ign == 0) {
+        for(int i=0;i<line->stops.size();i++){
+            float x_deff = abs(c_pos.x()-line->stops[i]->pos.x()-5);        // -5 to compensate for positioning offset
+            float y_deff = abs(c_pos.y()-line->stops[i]->pos.y()-5);
+
+            if(x_deff <= 1 && y_deff <= 1){
+                delay = 50;     // wait at stop for
+                ign = 5;        // ignorestop notices within 5 next ticks
+            }
         }
     }
-   }
-   else{
+    else {
        ign--;
-   }
+    }
 
     /* get length of route */
     float x = abs(c_pos.x() - dest.x());
