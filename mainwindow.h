@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QPropertyAnimation>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow;}
@@ -54,13 +55,13 @@ private:
     struct t_bus {
         int line_id;        // id of line it belongs to
         int delay;          // delay starting of the bus, in timer ticks
-        int ign = 0;        // ignore value
         QGraphicsEllipseItem *obj;
         QPointF c_pos;      // current position of the bus
         QPointF dest;       // point the bus is moving to
         int idx;            // index in route vector
         bool init = true;   // let the bus lead its position and route
         void move(t_line*);
+        int ign = 0;
     };
 
     /* visual line objects */
