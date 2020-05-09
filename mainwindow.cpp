@@ -65,8 +65,8 @@ void MainWindow::initScene()
     bg_img = bg_img.scaledToWidth(400, Qt::TransformationMode::FastTransformation);
     bg_img = bg_img.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
     auto bg_ptr = scene->addPixmap(bg_img);     // insert image into scene
-    bg_ptr->setPos(-35, 25);
-    auto sqr = scene->addRect(-35, 25, 400, 400, street_highlight); // background bounds for testing
+    bg_ptr->setPos(-40, 10);
+    auto sqr = scene->addRect(-40, 10, 400, 400, street_highlight); // background bounds for testing
 
     street_list = new QVector<t_street*>;
     stop_list = new QVector<t_stop*>;
@@ -137,10 +137,10 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     line2->makeRoute();
     line4->makeRoute();
     line20->makeRoute();
-    QVector<QPointF>::iterator i;
+    /*QVector<QPointF>::iterator i;
     for(i = line2->route.begin(); i != line2->route.end(); i++) {
         auto p =scene->addEllipse((*i).x() - 1, (*i).y() - 1, 2, 2, bus_pen_highlight, bus_brush_highlight);
-    }
+    }*/
 }
 
 void MainWindow::initSceneStops(MyScene *scene) {
@@ -160,7 +160,7 @@ void MainWindow::initSceneStops(MyScene *scene) {
             double x = QString(list.at(1).toLocal8Bit().constData()).toDouble();
             double y = QString(list.at(2).toLocal8Bit().constData()).toDouble();
 
-            stop->obj = scene->addRect(x, y, 10, 10, stop_pen_default, stop_brush_default);
+            stop->obj = scene->addRect(x - 5, y - 5, 10, 10, stop_pen_default, stop_brush_default);
             stop->name = list.at(0).toLocal8Bit().constData();
             stop->pos = QPointF(x, y);
 
@@ -200,7 +200,8 @@ void MainWindow::initSceneBuses(MyScene *scene) {
             double y = QString(list.at(3).toLocal8Bit().constData()).toDouble();
 
 
-            bus->obj = scene->addEllipse(x-5, y-5, 10, 10, bus_pen_default, bus_brush_default);
+            bus->obj = scene->addEllipse(x - 5, y - 5, 10, 10, bus_pen_default, bus_brush_default);
+            bus->c_pos = QPointF(x, y);
             bus->line_id = QString(list.at(0).toLocal8Bit().constData()).toInt();
             bus->delay = QString(list.at(1).toLocal8Bit().constData()).toInt();
 
@@ -314,19 +315,19 @@ void MainWindow::zoom(int z)
 }
 
 void MainWindow::speedUp(){
-    if(timer->interval() > 100){
-        int new_time = timer->interval() - 100;
+    if(timer->interval() > 10){
+        int new_time = timer->interval() - 10;
         timer->setInterval(new_time);
     }
 }
 
 void MainWindow::speedDown(){
-    int new_time = timer->interval() + 100;
+    int new_time = timer->interval() + 10;
     timer->setInterval(new_time);
 }
 
 void MainWindow::speedNorm(){
-    timer->setInterval(1000);
+    timer->setInterval(100);
 }
 
 void MainWindow::highlight(int idx) {
@@ -460,7 +461,7 @@ void MainWindow::timerAction(){
     for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1);
     }
-    /*for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
+    for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         (*i)->move(line2);
     }
     for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
@@ -468,7 +469,7 @@ void MainWindow::timerAction(){
     }
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
         (*i)->move(line20);
-    }*/
+    }
 }
 
 void MainWindow::t_line::claimStreets(QVector<t_street*>* street_list) {
@@ -574,7 +575,7 @@ void MainWindow::t_line::makeRoute() {
                t_line::route.append(line_obj.p1());
            }
        } else {
-           t_line::route.append(p2);
+           t_line::route.append(p1);
        }
        if(!t_line::route.isEmpty()) {
            if(t_line::route.indexOf(p2) == -1) {
@@ -582,20 +583,11 @@ void MainWindow::t_line::makeRoute() {
            }
        }
     }
-
-    /* add last point */
-    auto line_obj = t_line::streets[t_line::streets.size() - 1]->obj->line();
-    if(t_line::route.last() == line_obj.p1()) {
-        t_line::route.append(line_obj.p2());
-    } else {
-        t_line::route.append(line_obj.p1());
-    }
 }
 
 void MainWindow::t_bus::move(t_line * line) {
     /* initialize route info */
     if(t_bus::init) {
-        t_bus::c_pos = line->route[0];
         t_bus::dest = line->route[1];
         t_bus::idx = 1;
         t_bus::init = false;
@@ -643,19 +635,20 @@ void MainWindow::t_bus::move(t_line * line) {
         y_pol = 1;
     }
 
-   if(ign == 0){
-    for(int i=0;i<line->stops.size();i++){
-        double lenght = QLineF(c_pos.x()-5,c_pos.y()-5,line->stops[i]->pos.x(),line->stops[i]->pos.y()).length();
-        qDebug() << lenght;
-        if(lenght <= 1.5){
-            delay = 50;
-            ign = 5;
+    /* stop@stop */
+    if(ign == 0) {
+        for(int i=0;i<line->stops.size();i++) {
+            /* calculate length to stop */
+            double length = QLineF(c_pos.x(),c_pos.y(),line->stops[i]->pos.x(),line->stops[i]->pos.y()).length();
+
+            if(length <= 1.5){
+                delay = 50;
+                ign = 5;
+            }
         }
-    }
-   }
-   else{
+    } else {
        ign--;
-   }
+    }
 
     /* get length of route */
     float x = abs(c_pos.x() - dest.x());
