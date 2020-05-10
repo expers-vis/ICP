@@ -19,14 +19,11 @@ MyScene::MyScene(QObject *parent) :
 void MyScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     for (auto* item : items(event->scenePos())) {
-        if (auto line = dynamic_cast<QGraphicsLineItem*>(item); line){
-            auto pos = event->screenPos();
-            qDebug() << pos;
-            if(pos == QPointF(100,255)){
-            line->setPen(QPen({Qt::red},3));
-            qDebug() << event->scenePos();
-            }
-        }
+        if (auto bus = dynamic_cast<QGraphicsEllipseItem*>(item); bus){
+
+            bus->setPen(QPen({Qt::red},3));
+                   }
+
     }
 
     QGraphicsScene::mousePressEvent(event);
