@@ -11,4 +11,4 @@ Dobogan 50 80
 Modra 100 200
 Blazena 255 60
 Severna 100 60
-Ranna 210 355
+Ranna 210 357
