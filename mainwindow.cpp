@@ -92,10 +92,10 @@ void MainWindow::initScene()
     /* render bus icons */
     initSceneBuses(scene);
 
-    //line1->getTimetable("line1_timetable.txt");
+    line1->getTimetable("line1_timetable.txt");
     line2->getTimetable("line2_timetable.txt");
-    //line4->getTimetable("line4_timetable.txt");
-    //line20->getTime_able("line20_timetable.txt");
+    line4->getTimetable("line4_timetable.txt");
+    line20->getTimetable("line20_timetable.txt");
 
 
 
@@ -469,18 +469,18 @@ void MainWindow::timerAction(){
     /* move the busses */
     QVector<t_bus*>::iterator i;
 
-   /*for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+  for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1,time);
-    }*/
-    for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
+    }
+     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         (*i)->move(line2,time);
     }
-   /* for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
+    for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
         (*i)->move(line4,time);
     }
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
         (*i)->move(line20,time);
-    }*/
+    }
 
     /* forward time */
     time++;
@@ -694,11 +694,20 @@ void MainWindow::t_bus::move(t_line * line, int time) {
             /* stop if nearby stop */
             if(length <= 1.5){
 
-                delay = start_delay + line->timetable[stop_num] - time;
-                //qDebug() <<"delay: " << delay;
-                //qDebug() << time;
-                ign = 5;    // guard againt stopping againt on the same stop
-                stop_num = (stop_num+1)%line->timetable.size();
+
+                if(stop_num < line->timetable.size()){
+                    delay = start_delay + line->timetable[stop_num] - time;
+                    ign = 5;    // guard againt stopping againt on the same stop
+
+                    stop_num++;
+                }
+                else{
+                    stop_num = 0;
+
+                    start_delay = time + 3600;
+                }
+    qDebug() << delay;
+    qDebug() << stop_num;
             }
         }
     } else {
@@ -725,7 +734,7 @@ void MainWindow::t_bus::move(t_line * line, int time) {
     c_pos += QPointF(x_coef, y_coef);       // actualise current position
 
     /* if destination is reached, set a next one */
-    if(length <= 0.9){
+    if(length <= 1){
         idx=(idx + 1) % line->route.size();
         dest = line->route[idx];
         //qDebug() << dest << " next index: " << idx;

@@ -18,6 +18,15 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    QPen stop_pen_default;
+    QPen stop_pen_highlight;
+    QBrush stop_brush_default;
+    QBrush stop_brush_hightlight;
+
+    QPen bus_pen_default;
+    QPen bus_pen_highlight;
+    QBrush bus_brush_default;
+    QBrush bus_brush_highlight;
 
 private:
     Ui::MainWindow *ui;
@@ -29,15 +38,7 @@ private:
     QPen street_default;
     QPen street_highlight;
 
-    QPen stop_pen_default;
-    QPen stop_pen_highlight;
-    QBrush stop_brush_default;
-    QBrush stop_brush_hightlight;
 
-    QPen bus_pen_default;
-    QPen bus_pen_highlight;
-    QBrush bus_brush_default;
-    QBrush bus_brush_highlight;
 
     struct t_line;
 
