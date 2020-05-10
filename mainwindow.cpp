@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     initScene();
     initTimer();
     initSelectBox();
+    ui->timeDisplay->setFont(QFont("arial", 30, 10, false));
 
     /* connect signals to slots */
     connect(ui->zoominbtn, &QPushButton::clicked, this, &MainWindow::zoomin);
@@ -353,31 +354,31 @@ void MainWindow::findBus(QGraphicsEllipseItem* bus) {
 
     for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         if(bus == (*i)->obj) {
-            highlight(1);
+            ui->lineSelectBox->setCurrentIndex(1);
             return;
         }
     }
     for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
         if(bus == (*i)->obj) {
-            highlight(2);
+            ui->lineSelectBox->setCurrentIndex(2);
             return;
         }
     }
     for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
         if(bus == (*i)->obj) {
-            highlight(3);
+            ui->lineSelectBox->setCurrentIndex(3);
             return;
         }
     }
     for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
         if(bus == (*i)->obj) {
-            highlight(4);
+            ui->lineSelectBox->setCurrentIndex(4);
             return;
         }
     }
 
     /* no bus found */
-    highlight(0);
+    ui->lineSelectBox->setCurrentIndex(0);
 }
 
 void MainWindow::highlight(int idx) {

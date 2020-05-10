@@ -25,7 +25,8 @@ private:
     Ui::timetableDisplay *ui;
 
 private:
-    void displayTimetable(QString);
+    void displayTimetable(QString, int);
+    inline QString formatTime(long int);
 };
 
 #endif // TIMETABLEDISPLAY_H
