@@ -11,7 +11,6 @@
 #include <QTimer>
 #include <QFile>
 #include <QMessageBox>
-#include <myscene.h>
 #include <QDebug>
 #include <math.h>
 
@@ -39,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->lineSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(highlight(int)));
     connect(ui->timetableBtn, &QPushButton::clicked, this, &MainWindow::showTimetable);
+    connect(ui->graphicsView->scene(), SIGNAL(sendBus(QGraphicsEllipseItem*)), this, SLOT(findBus(QGraphicsEllipseItem*)));
 }
 
 MainWindow::~MainWindow()
@@ -56,18 +56,25 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+MyScene::MyScene(QObject *parent) :
+    QGraphicsScene(parent)
+{
+
+}
+
 void MainWindow::initScene()
 {
     auto *scene = new MyScene(ui->graphicsView);
     ui->graphicsView->setScene(scene);
 
+
     /* render background */
-    auto bg_img = QPixmap(QCoreApplication::applicationDirPath() + "/original.png", "png", Qt::AutoColor);     // load image
+    /*auto bg_img = QPixmap(QCoreApplication::applicationDirPath() + "/original.png", "png", Qt::AutoColor);     // load image
     bg_img = bg_img.scaledToWidth(400, Qt::TransformationMode::FastTransformation);
     bg_img = bg_img.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
     auto bg_ptr = scene->addPixmap(bg_img);     // insert image into scene
-    bg_ptr->setPos(-40, 10);
-    auto sqr = scene->addRect(-40, 10, 400, 400, street_highlight); // background bounds for testing
+    bg_ptr->setPos(-40, 10);*/
+    scene->addRect(-40, 10, 400, 400, street_highlight); // background bounds for testing
 
     street_list = new QVector<t_street*>;
     stop_list = new QVector<t_stop*>;
@@ -102,7 +109,7 @@ void MainWindow::initScene()
 
 }
 
-void MainWindow::initSceneStreets(MyScene* scene) {
+void MainWindow::initSceneStreets(QGraphicsScene* scene) {
     QFile file("data/streets.txt");      // filename
     QString line;
 
@@ -152,7 +159,7 @@ void MainWindow::initSceneStreets(MyScene* scene) {
     }*/
 }
 
-void MainWindow::initSceneStops(MyScene *scene) {
+void MainWindow::initSceneStops(QGraphicsScene *scene) {
     QFile file("data/stops.txt");      // filename
     QString line;
 
@@ -191,7 +198,7 @@ void MainWindow::initSceneStops(MyScene *scene) {
     line20->claimStops(stop_list);
 }
 
-void MainWindow::initSceneBuses(MyScene *scene) {
+void MainWindow::initSceneBuses(QGraphicsScene *scene) {
     QFile file("data/buses.txt");      // filename
     QString line;
 
@@ -210,6 +217,7 @@ void MainWindow::initSceneBuses(MyScene *scene) {
 
 
             bus->obj = scene->addEllipse(x - 5, y - 5, 10, 10, bus_pen_default, bus_brush_default);
+            bus->obj->hide();
             bus->c_pos = QPointF(x, y);
             bus->line_id = QString(list.at(0).toLocal8Bit().constData()).toInt();
             bus->delay = QString(list.at(1).toLocal8Bit().constData()).toInt();
@@ -338,6 +346,38 @@ void MainWindow::speedDown(){
 
 void MainWindow::speedNorm(){
     timer->setInterval(100);
+}
+
+void MainWindow::findBus(QGraphicsEllipseItem* bus) {
+    QVector<t_bus*>::iterator i;
+
+    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+        if(bus == (*i)->obj) {
+            highlight(1);
+            return;
+        }
+    }
+    for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
+        if(bus == (*i)->obj) {
+            highlight(2);
+            return;
+        }
+    }
+    for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
+        if(bus == (*i)->obj) {
+            highlight(3);
+            return;
+        }
+    }
+    for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
+        if(bus == (*i)->obj) {
+            highlight(4);
+            return;
+        }
+    }
+
+    /* no bus found */
+    highlight(0);
 }
 
 void MainWindow::highlight(int idx) {
@@ -645,9 +685,16 @@ void MainWindow::t_bus::move(t_line * line, int time) {
 
     /* wait out delay */
     if(delay > 0) {
+        if(start_delay > 3600) {
+            obj->hide();
+        }
+
         delay--;
         return;
     }
+
+    /* show bus when starting route */
+    obj->show();
 
     int x_pol = 1;
     int y_pol = 1;
@@ -697,7 +744,7 @@ void MainWindow::t_bus::move(t_line * line, int time) {
 
                 if(stop_num < line->timetable.size()){
                     delay = start_delay + line->timetable[stop_num] - time;
-                    ign = 5;    // guard againt stopping againt on the same stop
+                    ign = 5;    // guard againt stopping again on the same stop
 
                     stop_num++;
                 }
@@ -706,8 +753,6 @@ void MainWindow::t_bus::move(t_line * line, int time) {
 
                     start_delay = time + 3600;
                 }
-    qDebug() << delay;
-    qDebug() << stop_num;
             }
         }
     } else {
@@ -741,4 +786,19 @@ void MainWindow::t_bus::move(t_line * line, int time) {
     }
 
 
+}
+
+void MyScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+
+    for (auto* item : items(event->scenePos())) {
+        if (auto bus = dynamic_cast<QGraphicsEllipseItem*>(item); bus) {
+            emit sendBus(bus);
+            return;
+        }
+    }
+
+    emit sendBus(nullptr);
+
+    QGraphicsScene::mousePressEvent(event);
 }

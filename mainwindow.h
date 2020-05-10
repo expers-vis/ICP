@@ -2,13 +2,13 @@
 #define MAINWINDOW_H
 
 #include "timetabledisplay.h"
-#include "myscene.h"
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QGraphicsSceneMouseEvent>
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow;}
+namespace Ui { class MainWindow; class MyScene;}
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow
@@ -17,18 +17,9 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-    QPen stop_pen_default;
-    QPen stop_pen_highlight;
-    QBrush stop_brush_default;
-    QBrush stop_brush_hightlight;
+    ~MainWindow();  
 
-    QPen bus_pen_default;
-    QPen bus_pen_highlight;
-    QBrush bus_brush_default;
-    QBrush bus_brush_highlight;
-
-private:
+public:
     Ui::MainWindow *ui;
     timetableDisplay *timetableObj;
     QTimer *timer;
@@ -38,7 +29,15 @@ private:
     QPen street_default;
     QPen street_highlight;
 
+    QPen stop_pen_default;
+    QPen stop_pen_highlight;
+    QBrush stop_brush_default;
+    QBrush stop_brush_hightlight;
 
+    QPen bus_pen_default;
+    QPen bus_pen_highlight;
+    QBrush bus_brush_default;
+    QBrush bus_brush_highlight;
 
     struct t_line;
 
@@ -99,16 +98,18 @@ private:
     t_line *line4;
     t_line *line20;
 
+    void drop_highlight_line(t_line*);
+
+
 private:
     void initScene();
-    void initSceneStreets(MyScene* scene);
-    void initSceneBuses(MyScene* scene);
-    void initSceneStops(MyScene* scene);
+    void initSceneStreets(QGraphicsScene* scene);
+    void initSceneBuses(QGraphicsScene* scene);
+    void initSceneStops(QGraphicsScene* scene);
     void initTimer();
     void initPens();
     void initSelectBox();
     void highlight_line(t_line*);
-    void drop_highlight_line(t_line*);
     inline QString formatTime(long int);
 
 private slots:
@@ -121,9 +122,23 @@ private slots:
     void speedNorm();
     void highlight(int);
     void showTimetable();
+    void findBus(QGraphicsEllipseItem*);
 
 signals:
     void timetableNumber(int);
+};
+
+class MyScene : public QGraphicsScene
+{
+    Q_OBJECT
+public:
+    explicit MyScene(QObject *parent = nullptr);
+
+public:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+signals:
+    void sendBus(QGraphicsEllipseItem*);
 };
 
 #endif // MAINWINDOW_H
