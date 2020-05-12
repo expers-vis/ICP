@@ -19,10 +19,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();  
 
-public:
+private:
     Ui::MainWindow *ui;
     timetableDisplay *timetableObj;
     QTimer *timer;
+    int time_speed = 100;   // int used because problems with double precision
     long int time = 0;   // run time of application
 
     /* graphic options */

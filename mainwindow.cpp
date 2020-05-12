@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     initTimer();
     initSelectBox();
     ui->timeDisplay->setFont(QFont("arial", 30, 10, false));
+    ui->timeSpeedlabel->setFont(QFont("arial", 15, 10, false));
 
     /* connect signals to slots */
     connect(ui->zoominbtn, &QPushButton::clicked, this, &MainWindow::zoomin);
@@ -261,7 +262,7 @@ void MainWindow::initTimer() {
     timer = new QTimer(this);
     timer->setSingleShot(false);    // explicit repeat
 
-    timer->start(100);     //default 1 sec events
+    timer->start(1000);     //default 1 sec events
 
     connect(timer, &QTimer::timeout,  this, &MainWindow::timerAction);
 }
@@ -329,24 +330,87 @@ void MainWindow::zoomout()
 void MainWindow::zoom(int z)
 {
     auto org = ui->graphicsView->transform();
-    qreal scale = z /10.0;
+    qreal scale = z / 10.0;
     ui->graphicsView->setTransform(QTransform(scale,org.m12(), org.m21(), scale, org.dx(), org.dy()));
 }
 
 void MainWindow::speedUp(){
-    if(timer->interval() > 10){
-        int new_time = timer->interval() - 10;
+    if(time_speed >= 600) {
+        time_speed += 200;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
         timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
+    }
+    if(time_speed >= 200) {
+        time_speed += 100;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
+    }
+    if(time_speed >= 30){
+        time_speed += 10;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
+    }
+    if(time_speed < 30){
+        time_speed += 5;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
     }
 }
 
 void MainWindow::speedDown(){
-    int new_time = timer->interval() + 10;
-    timer->setInterval(new_time);
+    if(time_speed == 5) {
+        /* lowest speed */
+        return;
+    }
+    if(time_speed <= 30){
+        time_speed -= 5;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
+    }
+    if(time_speed <= 200) {
+        time_speed -= 10;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
+    }
+    if(time_speed <= 600) {
+        time_speed -= 100;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        return;
+    } else {
+        time_speed -= 200;
+        double speed = (double)time_speed / 100;
+        double new_time = 1000 * (1 / speed);
+        timer->setInterval(new_time);
+        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+    }
 }
 
 void MainWindow::speedNorm(){
-    timer->setInterval(100);
+    timer->setInterval(1000);
+    time_speed = 100;
+
+    ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", (double)time_speed/100));
 }
 
 void MainWindow::findBus(QGraphicsEllipseItem* bus) {
