@@ -335,6 +335,10 @@ void MainWindow::zoom(int z)
 }
 
 void MainWindow::speedUp(){
+    if(time_speed == 2000) {
+        /* hard limit */
+        return;
+    }
     if(time_speed >= 600) {
         time_speed += 200;
         double speed = (double)time_speed / 100;
