@@ -335,40 +335,32 @@ void MainWindow::zoom(int z)
 }
 
 void MainWindow::speedUp(){
-    if(time_speed == 2000) {
-        /* hard limit */
+    if(time_speed == 10000) {
+        /* limit 100x speed */
+        return;
+    }
+    if(time_speed >= 5000) {
+        changeTime(1000);
+        return;
+    }
+    if(time_speed >= 2000) {
+        changeTime(500);
         return;
     }
     if(time_speed >= 600) {
-        time_speed += 200;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(200);
         return;
     }
     if(time_speed >= 200) {
-        time_speed += 100;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(100);
         return;
     }
     if(time_speed >= 30){
-        time_speed += 10;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(10);
         return;
     }
     if(time_speed < 30){
-        time_speed += 5;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(5);
         return;
     }
 }
@@ -379,34 +371,27 @@ void MainWindow::speedDown(){
         return;
     }
     if(time_speed <= 30){
-        time_speed -= 5;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(-5);
         return;
     }
     if(time_speed <= 200) {
-        time_speed -= 10;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(-10);
         return;
     }
     if(time_speed <= 600) {
-        time_speed -= 100;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(-100);
+        return;
+    }
+    if(time_speed <= 2000) {
+        changeTime(-200);
+        return;
+    }
+    if(time_speed <= 5000) {
+        changeTime(-500);
         return;
     } else {
-        time_speed -= 200;
-        double speed = (double)time_speed / 100;
-        double new_time = 1000 * (1 / speed);
-        timer->setInterval(new_time);
-        ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", speed));
+        changeTime(-1000);
+        return;
     }
 }
 
@@ -414,7 +399,15 @@ void MainWindow::speedNorm(){
     timer->setInterval(1000);
     time_speed = 100;
 
-    ui->timeSpeedlabel->setText(QString().sprintf("%.2fx", (double)time_speed/100));
+    ui->timeSpeedlabel->setText(QString().sprintf("Speed: %.2fx", (double)time_speed/100));
+}
+
+inline void MainWindow::changeTime(int change) {
+    time_speed += change;
+    double speed = (double)time_speed / 100;
+    double new_time = 1000 * (1 / speed);
+    timer->setInterval(new_time);
+    ui->timeSpeedlabel->setText(QString().sprintf("Speed: %.2fx", speed));
 }
 
 void MainWindow::findBus(QGraphicsEllipseItem* bus) {
@@ -524,7 +517,6 @@ void MainWindow::showTimetable() {
         case 0:
         break;
         case 1:
-            qDebug() << "Printing info 1\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 1 Timetable");
 
@@ -536,7 +528,6 @@ void MainWindow::showTimetable() {
             timetableObj->show();
         break;
         case 2:
-            qDebug() << "Printing info 2\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 2 Timetable");
 
@@ -548,7 +539,6 @@ void MainWindow::showTimetable() {
             timetableObj->show();
         break;
         case 3:
-            qDebug() << "Printing info 4\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 4 Timetable");
 
@@ -560,7 +550,6 @@ void MainWindow::showTimetable() {
             timetableObj->show();
         break;
         case 4:
-            qDebug() << "Printing info 20\n";
             timetableObj = new timetableDisplay(this);
             timetableObj->setWindowTitle("Line 20 Timetable");
 

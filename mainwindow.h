@@ -113,6 +113,7 @@ private:
     void initSelectBox();
     void highlight_line(t_line*);
     inline QString formatTime(long int);
+    inline void changeTime(int);
 
 private slots:
     void zoomin();
