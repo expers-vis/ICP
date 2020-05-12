@@ -1,6 +1,6 @@
 Koleso 0
-Sumracna_1 126
-Sumracna_2 266
+Nocna_1 126
+Nocna_2 266
 Krizna_2 478
 Krizna_3 659
 Blazena 851

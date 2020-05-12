@@ -1,5 +1,5 @@
-Sumracna_1 280 240
-Sumracna_2 280 130
+Nocna_1 280 240
+Nocna_2 280 130
 Zelena 190 110
 Krizna_2 170 230
 Krizna_3 210 230

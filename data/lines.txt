@@ -1,4 +1,4 @@
-1 ranna lava vodna kotolna modra fialova zelena masna sumracna
-2 koleso_1 koleso_2 drisliak sumracna heso blazena severna dobogan_2 jankovska martinska kriva nivy
+1 ranna lava vodna kotolna modra fialova zelena masna nocna
+2 koleso_1 koleso_2 drisliak nocna heso blazena severna dobogan_2 jankovska martinska kriva nivy
 4 maticna martinska jankovska dobogan_1 spojna fialova zelena masna uholna krizna_3 marianska koleso_2 dobra krizna_1
-20 blazena heso sumracna ranna lesna koleso_2 koleso_1 kotolna krizna_1 krizna_2 krizna_3 chrenovska prazena
+20 blazena heso nocna ranna lesna koleso_2 koleso_1 kotolna krizna_1 krizna_2 krizna_3 chrenovska prazena

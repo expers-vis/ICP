@@ -1,5 +1,5 @@
-Sumracna_1 0
-Sumracna_2 307
+Nocna_1 0
+Nocna_2 307
 Modra 473
 Zelena 614
 Ranna 754
