@@ -23,19 +23,19 @@ void timetableDisplay::on_timetableExitBtn_clicked()
 void timetableDisplay::recieveTimetable(int idx) {
     switch(idx) {
         case 1:
-            displayTimetable("line1_timetable.txt", idx);
+            displayTimetable("line1_timetable.txt", 1);
         break;
 
         case 2:
-            displayTimetable("line2_timetable.txt", idx);
+            displayTimetable("line2_timetable.txt", 2);
         break;
 
         case 3:
-            displayTimetable("line4_timetable.txt", idx);
+            displayTimetable("line4_timetable.txt", 4);
         break;
 
         case 4:
-            displayTimetable("line20_timetable.txt", idx);
+            displayTimetable("line20_timetable.txt", 20);
         break;
 
     default:

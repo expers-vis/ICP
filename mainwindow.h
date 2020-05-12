@@ -64,6 +64,7 @@ public:
         bool init = true;   // let the bus lead its position and route
         void move(t_line*, int);
         int ign = 0;
+        bool hide = false;
     };
 
     /* visual line objects */

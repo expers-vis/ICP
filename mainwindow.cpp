@@ -685,17 +685,18 @@ void MainWindow::t_bus::move(t_line * line, int time) {
 
 
     /* wait out delay */
-    if(delay > 0) {
-        if(start_delay > 3600) {
-            obj->hide();
-        }
-
+    if(delay > 0){
         delay--;
         return;
     }
 
-    /* show bus when starting route */
-    obj->show();
+    if(hide == true){
+        obj->hide();
+    }
+    else{
+        /* show bus when starting route */
+        obj->show();
+    }
 
     int x_pol = 1;
     int y_pol = 1;
@@ -751,8 +752,8 @@ void MainWindow::t_bus::move(t_line * line, int time) {
                 }
                 else{
                     stop_num = 0;
-
-                    start_delay = time + 3600;
+                    hide = true;
+                    start_delay = start_delay + 86400;
                 }
             }
         }
