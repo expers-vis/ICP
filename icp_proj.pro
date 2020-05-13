@@ -18,12 +18,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
-    myscene.cpp \
     timetabledisplay.cpp
 
 HEADERS += \
     mainwindow.h \
-    myscene.h \
     timetabledisplay.h
 
 FORMS += \
