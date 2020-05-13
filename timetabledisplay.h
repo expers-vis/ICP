@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QFile>
 #include <QMessageBox>
+#include "linelib.h"
 
 namespace Ui {
 class timetableDisplay;
@@ -20,6 +21,7 @@ public:
 private slots:
     void on_timetableExitBtn_clicked();
     void recieveTimetable(int);
+    void recieveBus(long int, t_bus*);
 
 private:
     Ui::timetableDisplay *ui;
