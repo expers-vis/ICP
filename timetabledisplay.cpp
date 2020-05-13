@@ -67,35 +67,43 @@ void timetableDisplay::displayTimetable(QString t_filename, int line_id) {
 
         /* print arrival time for each bus */
         int bus_num = 0;    // bus number within line
+        int hour = 0;       // time for the next hour
 
-        while(!b_stream.atEnd()) {
-            QString b_line = b_stream.readLine();
-            QList b_list = b_line.split(" ");
+        while(hour <= 79200) {
+            while(!b_stream.atEnd()) {
+                QString b_line = b_stream.readLine();
+                QList b_list = b_line.split(" ");
 
-            /* print buses only for requested line */
-            int bus_id = QString(b_list.at(0).toLocal8Bit().constData()).toInt();
-            if(bus_id == line_id) {
-                printLine.sprintf("%s #%d\t", "Bus", ++bus_num);
+                /* print buses only for requested line */
+                int bus_id = QString(b_list.at(0).toLocal8Bit().constData()).toInt();
+                if(bus_id == line_id) {
+                    printLine.sprintf("%s #%d\t", "Bus", ++bus_num);
 
-                int bus_time = QString(b_list.at(1).toLocal8Bit().constData()).toInt();
+                    int bus_time = QString(b_list.at(1).toLocal8Bit().constData()).toInt();
 
-                /* append arrival to the stop */
-                while(!t_stream.atEnd()) {
-                    QString t_line = t_stream.readLine();
-                    QList t_list = t_line.split(" ");
+                    /* append arrival to the stop */
+                    while(!t_stream.atEnd()) {
+                        QString t_line = t_stream.readLine();
+                        QList t_list = t_line.split(" ");
 
-                    int stop_time = QString(t_list.at(1).toLocal8Bit().constData()).toInt();
-                    QString time = formatTime(stop_time + bus_time);
+                        int stop_time = QString(t_list.at(1).toLocal8Bit().constData()).toInt();
+                        QString time = formatTime(stop_time + bus_time + hour);
 
-                    printLine.append(QString().sprintf("%*s\t", time.size(),time.toLocal8Bit().constData()));
+                        printLine.append(QString().sprintf("%*s\t", time.size(),time.toLocal8Bit().constData()));
 
+                    }
+
+                    t_stream.seek(0);
+
+                    /* print bus to list */
+                    ui->timetableList->addItem(printLine);
                 }
-
-                t_stream.seek(0);
-
-                /* print bus to list */
-                ui->timetableList->addItem(printLine);
             }
+
+            b_stream.seek(0);
+
+            /* forward hour */
+            hour += 3600;
         }
 
     }
@@ -105,7 +113,7 @@ void timetableDisplay::displayTimetable(QString t_filename, int line_id) {
     }
 
     ui->timetableList->setMinimumWidth(ui->timetableList->sizeHintForColumn(0) + 2 * ui->timetableList->frameWidth());    // adjust list width
-    ui->timetableList->setMinimumHeight(ui->timetableList->sizeHintForRow(0) * ui->timetableList->count() + 2 * ui->timetableList->frameWidth());
+    //i->timetableList->setMinimumHeight(ui->timetableList->sizeHintForRow(0) * ui->timetableList->count() + 2 * ui->timetableList->frameWidth());
     timetable_file.close();
     bus_file.close();
 }
