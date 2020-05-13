@@ -114,6 +114,13 @@ inline QString timetableDisplay::formatTime(long int sec) {
     int hour = sec / 3600;
     sec = sec % 3600;
     int min = sec / 60;
+    if(sec % 60 >= 30) {
+        min++;
+        if(min == 60) {
+            hour++;
+            min = 0;
+        }
+    }
 
     return QString().sprintf("%02d:%02d", hour, min);
 }
