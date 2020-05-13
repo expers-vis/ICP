@@ -1,5 +1,5 @@
 Martinska 0
-Maticna 125
-Koleso 476
-Zelena 747
-Krizna_3 920
+Maticna 180
+Koleso 540
+Zelena 840
+Krizna_3 1020

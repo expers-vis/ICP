@@ -1,7 +1,7 @@
 Koleso 0
-Nocna_1 126
-Nocna_2 266
-Krizna_2 478
-Krizna_3 659
-Blazena 851
-Ranna 921
+Nocna_1 180
+Nocna_2 360
+Krizna_2 600
+Krizna_3 780
+Blazena 1020
+Ranna 1140

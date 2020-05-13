@@ -1,5 +1,5 @@
 Nocna_1 0
-Nocna_2 307
-Modra 473
-Zelena 614
-Ranna 754
+Nocna_2 360
+Modra 540
+Zelena 720
+Ranna 900
