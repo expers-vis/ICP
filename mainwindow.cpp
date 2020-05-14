@@ -20,26 +20,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    /* hide time display */
+    ui->timeDisplay->hide();
+    ui->timeSpeedlabel->hide();
+
     /* initialize objects */
     initPens();
-    initScene();
-    initTimer();
     initSelectBox();
     ui->timeDisplay->setFont(QFont("arial", 30, 10, false));
     ui->timeSpeedlabel->setFont(QFont("arial", 15, 10, false));
-
-    /* connect signals to slots */
-    connect(ui->zoominbtn, &QPushButton::clicked, this, &MainWindow::zoomin);
-    connect(ui->zoomoutbtn, &QPushButton::clicked, this, &MainWindow::zoomout);
-    connect(ui->zoomslider, &QSlider::valueChanged,this, &MainWindow::zoom);
-
-    connect(ui->speedUpBtn, &QPushButton::clicked, this, &MainWindow::speedUp);
-    connect(ui->speedDownBtn, &QPushButton::clicked, this, &MainWindow::speedDown);
-    connect(ui->speedNormBtn, &QPushButton::clicked, this, &MainWindow::speedNorm);
-
-    connect(ui->lineSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(highlight(int)));
-    connect(ui->timetableBtn, &QPushButton::clicked, this, &MainWindow::showTimetable);
-    connect(ui->graphicsView->scene(), SIGNAL(sendBus(QGraphicsEllipseItem*)), this, SLOT(findBus(QGraphicsEllipseItem*)));
 }
 
 MainWindow::~MainWindow()
@@ -104,10 +93,6 @@ void MainWindow::initScene()
     line2->getTimetable("line2_timetable.txt");
     line4->getTimetable("line4_timetable.txt");
     line20->getTimetable("line20_timetable.txt");
-
-
-
-
 }
 
 void MainWindow::initSceneStreets(QGraphicsScene* scene) {
@@ -310,6 +295,21 @@ void MainWindow::initSelectBox() {
     ui->lineSelectBox->addItem("Line 2", 2);
     ui->lineSelectBox->addItem("Line 4", 4);
     ui->lineSelectBox->addItem("Line 20", 20);
+}
+
+void MainWindow::connectSignals() {
+    /* connect signals to slots */
+    connect(ui->zoominbtn, &QPushButton::clicked, this, &MainWindow::zoomin);
+    connect(ui->zoomoutbtn, &QPushButton::clicked, this, &MainWindow::zoomout);
+    connect(ui->zoomslider, &QSlider::valueChanged,this, &MainWindow::zoom);
+
+    connect(ui->speedUpBtn, &QPushButton::clicked, this, &MainWindow::speedUp);
+    connect(ui->speedDownBtn, &QPushButton::clicked, this, &MainWindow::speedDown);
+    connect(ui->speedNormBtn, &QPushButton::clicked, this, &MainWindow::speedNorm);
+
+    connect(ui->lineSelectBox, SIGNAL(currentIndexChanged(int)), this, SLOT(highlight(int)));
+    connect(ui->timetableBtn, &QPushButton::clicked, this, &MainWindow::showTimetable);
+    connect(ui->graphicsView->scene(), SIGNAL(sendBus(QGraphicsEllipseItem*)), this, SLOT(findBus(QGraphicsEllipseItem*)));
 }
 
 void MainWindow::zoomin()
@@ -610,7 +610,7 @@ void MainWindow::timerAction(){
     /* move the busses */
     QVector<t_bus*>::iterator i;
 
-  for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+    for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
         (*i)->move(line1,time);
     }
      for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
@@ -653,4 +653,49 @@ void MyScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     emit sendBus(nullptr);
 
     QGraphicsScene::mousePressEvent(event);
+}
+
+void MainWindow::on_startBtn_clicked()
+{
+    time = QTime(0, 0, 0).secsTo(ui->timeEdit->time());     // get inputted time in seconds
+
+    initScene();
+
+    /* print time */
+    QString tm = formatTime(time);
+    ui->timeDisplay->setText(tm);
+
+    /* simulate elapsed time to set position */
+    int  elapsed = time % 3600;
+
+    for(int j = 0; j < elapsed; j++) {
+        QVector<t_bus*>::iterator i;
+
+        for(i = line1->buses.begin(); i != line1->buses.end(); ++i) {
+            (*i)->move(line1,j);
+        }
+         for(i = line2->buses.begin(); i != line2->buses.end(); ++i) {
+            (*i)->move(line2,j);
+        }
+        for(i = line4->buses.begin(); i != line4->buses.end(); ++i) {
+            (*i)->move(line4,j);
+        }
+        for(i = line20->buses.begin(); i != line20->buses.end(); ++i) {
+            (*i)->move(line20,j);
+        }
+    }
+
+    /* start timer */
+    initTimer();
+
+    /* connect signals */
+    connectSignals();
+
+    /* show time display */
+    ui->timeDisplay->show();
+    ui->timeSpeedlabel->show();
+
+    /* hide button */
+    ui->startBtn->hide();
+    ui->timeEdit->hide();
 }

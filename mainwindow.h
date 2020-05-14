@@ -60,6 +60,7 @@ private:
     void initSceneStops(QGraphicsScene* scene);
     void initTimer();
     void initPens();
+    void connectSignals();
     void initSelectBox();
     void highlight_line(t_line*);
     inline QString formatTime(long int);
@@ -76,6 +77,8 @@ private slots:
     void highlight(int);
     void showTimetable();
     void findBus(QGraphicsEllipseItem*);
+
+    void on_startBtn_clicked();
 
 signals:
     void timetableNumber(int);

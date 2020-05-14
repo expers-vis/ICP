@@ -147,8 +147,6 @@ void t_bus::move(t_line * line, int time) {
         t_bus::init = false;
     }
 
-
-
     /* wait out delay */
     if(delay > 0){
         delay--;
@@ -218,12 +216,13 @@ void t_bus::move(t_line * line, int time) {
                 else{
                     stop_num = 0;
                     hide = true;
-                    start_delay = start_delay + 86400;
+                    start_delay = start_delay + 3600;
                 }
             }
         }
     } else {
-       ign--;
+        /* ignore */
+        ign--;
     }
 
     /* get length of route */

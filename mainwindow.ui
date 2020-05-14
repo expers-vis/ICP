@@ -58,6 +58,16 @@
           </property>
          </spacer>
         </item>
+        <item>
+         <widget class="QTimeEdit" name="timeEdit"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="startBtn">
+          <property name="text">
+           <string>Start</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
