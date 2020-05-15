@@ -149,6 +149,9 @@ void t_bus::move(t_line * line, int time) {
 
     /* wait out delay */
     if(delay > 0){
+        if(delay < 30){
+            hide = false;
+        }
         delay--;
         return;
     }

@@ -23,6 +23,19 @@ MainWindow::MainWindow(QWidget *parent)
     /* hide time display */
     ui->timeDisplay->hide();
     ui->timeSpeedlabel->hide();
+    ui->zoominbtn->hide();
+    ui->zoomoutbtn->hide();
+    ui->zoomslider->hide();
+    ui->menubar->hide();
+    ui->lineSelectBox->hide();
+    ui->statusbar->hide();
+    ui->speedDownBtn->hide();
+    ui->speedNormBtn->hide();
+    ui->speedUpBtn->hide();
+    ui->timetableBtn->hide();
+    ui->label_2->hide();
+    ui->label_3->hide();
+    ui->label_4->hide();
 
     /* initialize objects */
     initPens();
@@ -721,6 +734,19 @@ void MainWindow::on_startBtn_clicked()
     /* show time display */
     ui->timeDisplay->show();
     ui->timeSpeedlabel->show();
+    ui->zoominbtn->show();
+    ui->zoomoutbtn->show();
+    ui->zoomslider->show();
+    ui->menubar->show();
+    ui->lineSelectBox->show();
+    ui->statusbar->show();
+    ui->speedDownBtn->show();
+    ui->speedNormBtn->show();
+    ui->speedUpBtn->show();
+    ui->timetableBtn->show();
+    ui->label_2->show();
+    ui->label_3->show();
+    ui->label_4->show();
 
     /* hide button */
     ui->startBtn->hide();
