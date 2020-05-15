@@ -202,7 +202,7 @@ void MainWindow::initSceneBuses(QGraphicsScene *scene) {
             double y = QString(list.at(3).toLocal8Bit().constData()).toDouble();
 
 
-            bus->obj = scene->addEllipse(x - 5, y - 5, 10, 10, bus_pen_default, bus_brush_default);
+            bus->obj = scene->addEllipse(x - 5, y - 5, 10, 10, bus_pen_default, bus_brush_1);
             bus->obj->hide();
             bus->c_pos = QPointF(x, y);
             bus->line_id = QString(list.at(0).toLocal8Bit().constData()).toInt();
@@ -213,18 +213,22 @@ void MainWindow::initSceneBuses(QGraphicsScene *scene) {
             switch(bus->line_id) {
                 case 1:
                     line1->buses.append(bus);
+                    bus->obj->setBrush(bus_brush_1);
                 break;
 
                 case 2:
                     line2->buses.append(bus);
+                    bus->obj->setBrush(bus_brush_2);
                 break;
 
                 case 4:
                     line4->buses.append(bus);
+                    bus->obj->setBrush(bus_brush_4);
                 break;
 
                 case 20:
                     line20->buses.append(bus);
+                    bus->obj->setBrush(bus_brush_20);
                 break;
 
             default:
@@ -278,8 +282,14 @@ void MainWindow::initPens() {
     bus_pen_default.setColor("grey");
     bus_pen_default.setWidth(1);
 
-    bus_brush_default.setColor("light blue");
-    bus_brush_default.setStyle(Qt::SolidPattern);
+    bus_brush_1.setColor("blue");
+    bus_brush_1.setStyle(Qt::SolidPattern);
+    bus_brush_2.setColor("green");
+    bus_brush_2.setStyle(Qt::SolidPattern);
+    bus_brush_4.setColor("yellow");
+    bus_brush_4.setStyle(Qt::SolidPattern);
+    bus_brush_20.setColor("purple");
+    bus_brush_20.setStyle(Qt::SolidPattern);
 
     /* highlighted bus pen and brush */
     bus_pen_highlight.setColor("orange");
@@ -544,7 +554,24 @@ void MainWindow::drop_highlight_line(t_line *line) {
     }
     for(j = line->buses.begin(); j != line->buses.end(); ++j) {
         (*j)->obj->setPen(bus_pen_default);
-        (*j)->obj->setBrush((bus_brush_default));
+        switch((*j)->line_id) {
+            case 0: break;
+            case 1:
+                (*j)->obj->setBrush((bus_brush_1));
+            break;
+            case 2:
+                (*j)->obj->setBrush((bus_brush_2));
+            break;
+            case 4:
+                (*j)->obj->setBrush((bus_brush_4));
+            break;
+            case 20:
+                (*j)->obj->setBrush((bus_brush_20));
+            break;
+            default:
+                break;
+        }
+
         (*j)->obj->setZValue(0);
     }
     for(k = line->stops.begin(); k != line->stops.end(); ++k) {

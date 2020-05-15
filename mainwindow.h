@@ -38,7 +38,12 @@ public:
 
     QPen bus_pen_default;
     QPen bus_pen_highlight;
-    QBrush bus_brush_default;
+
+    QBrush bus_brush_1;
+    QBrush bus_brush_2;
+    QBrush bus_brush_4;
+    QBrush bus_brush_20;
+
     QBrush bus_brush_highlight;
 
 
