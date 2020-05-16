@@ -1,7 +1,10 @@
 /*! \file linelib.h
  * \brief Library of bus line structures
  *
- * \authors Martin Hiner - xhiner00, Adam Ševčík - xsevci64
+ * \author Martin Hiner - xhiner00
+ * \author Adam Ševčík - xsevci64
+ *
+ * \date 17.5.2020
  *
  * This library contains structures needed for work with each part of bus line such as streets, stops, buses, bus routes and timetables.
 */

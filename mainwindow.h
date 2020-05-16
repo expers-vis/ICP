@@ -1,3 +1,15 @@
+/*! \file mainwindow.h
+ * \brief Header for main window
+ *
+ * \author Martin Hiner - xhiner00
+ * \author Adam Ševčík - xsevci64
+ *
+ * \date 17.5.2020
+ *
+ * Header file for main part of the application.
+ * Main focus is on Graphics Scene - the map and user interface - how can user interact with application.
+*/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -20,12 +32,47 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();  
 
-public:
+private:
+    /*!
+     * \brief User Interface
+     *
+     * Contains setup of user inteface
+     */
     Ui::MainWindow *ui;
+
+    /*!
+     * \brief New dialog window for timetables
+     *
+     * When timetable is requested, new dialog window containing the timetable is opened using this pointer.
+     */
     timetableDisplay *timetableObj;
+
+    /*!
+     * \brief Timer for time simulation
+     *
+     * Simulates passing of one second.
+     * Works by counting down on supplied time interval in milliseconds.
+     * Default inteval is 1000 - 1 real time secon.
+     * By changing this interval, simulated time can be sped up or slowed down.
+     */
     QTimer *timer;
-    long int time = 0;   // run time of application
-    int time_speed = 100;   // int used because problems with double precision
+
+    /*!
+     * \brief Internal time
+     *
+     * Simulated time in seconds.
+     * This is set at the start of application and incremented after every timer interval.
+     * Used for time displaying and bus synchronisation.
+     */
+    long int time = 0;
+
+    /*!
+     * \brief Speed of time
+     *
+     * Used to speed up and slow down time by shortening and lengthening the timer interval respectively.
+     * Handled like a percent value of one second.
+     */
+    int time_speed = 100;
 
     /* graphic options */
     QPen street_default;
@@ -46,17 +93,23 @@ public:
 
     QBrush bus_brush_highlight;
 
-
+    //! Vector containig all streets on map
     QVector<t_street*> *street_list;
+
+    //! Vector containing all stops on map
     QVector<t_stop*> *stop_list;
 
+    //! Container for line no. 1
     t_line *line1;
+
+    //! Container for line no. 2
     t_line *line2;
+
+    //! Container for line no. 4
     t_line *line4;
+
+    //! Container for line no. 20
     t_line *line20;
-
-    void drop_highlight_line(t_line*);
-
 
 private:
     void initScene();
@@ -68,13 +121,43 @@ private:
     void connectSignals();
     void initSelectBox();
     void highlight_line(t_line*);
+    void drop_highlight_line(t_line*);
     inline QString formatTime(long int);
-    inline void changeTime(int);
+    inline void changeTimeSpeed(int);
 
 private slots:
+    /*!
+     * \brief Zoom in slot
+     *
+     * Zooms in on the map in Graphics Scene.
+     * Recieves from Zoom In button.
+     */
     void zoomin();
+
+    /*!
+     * \brief Zoom out slot
+     *
+     * Zooms out on the map in Graphics Scene.
+     * Recievse from Zoom Out button.
+     */
     void zoomout();
-    void zoom(int);
+
+    /*!
+     * \brief General zoom slot
+     *
+     * Zooms in or out of map by tranforming the Graphics Scene matrix using supplied coeficient.
+     *
+     * \param z Transformation coeficient
+     */
+    void zoom(int z);
+
+    /*!
+     * \brief Timer event slot
+     *
+     * Used to carry out actions every time simulated second passes.
+     * In this slot function, every bus is told to move on its route.
+     * Time counter is also incremented here.
+     */
     void timerAction();
     void speedUp();
     void speedDown();

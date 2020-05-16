@@ -372,27 +372,27 @@ void MainWindow::speedUp(){
         return;
     }
     if(time_speed >= 5000) {
-        changeTime(1000);
+        changeTimeSpeed(1000);
         return;
     }
     if(time_speed >= 2000) {
-        changeTime(500);
+        changeTimeSpeed(500);
         return;
     }
     if(time_speed >= 600) {
-        changeTime(200);
+        changeTimeSpeed(200);
         return;
     }
     if(time_speed >= 200) {
-        changeTime(100);
+        changeTimeSpeed(100);
         return;
     }
     if(time_speed >= 30){
-        changeTime(10);
+        changeTimeSpeed(10);
         return;
     }
     if(time_speed < 30){
-        changeTime(5);
+        changeTimeSpeed(5);
         return;
     }
 }
@@ -403,26 +403,26 @@ void MainWindow::speedDown(){
         return;
     }
     if(time_speed <= 30){
-        changeTime(-5);
+        changeTimeSpeed(-5);
         return;
     }
     if(time_speed <= 200) {
-        changeTime(-10);
+        changeTimeSpeed(-10);
         return;
     }
     if(time_speed <= 600) {
-        changeTime(-100);
+        changeTimeSpeed(-100);
         return;
     }
     if(time_speed <= 2000) {
-        changeTime(-200);
+        changeTimeSpeed(-200);
         return;
     }
     if(time_speed <= 5000) {
-        changeTime(-500);
+        changeTimeSpeed(-500);
         return;
     } else {
-        changeTime(-1000);
+        changeTimeSpeed(-1000);
         return;
     }
 }
@@ -434,7 +434,7 @@ void MainWindow::speedNorm(){
     ui->timeSpeedlabel->setText(QString().sprintf("Speed: %.2fx", (double)time_speed/100));
 }
 
-inline void MainWindow::changeTime(int change) {
+inline void MainWindow::changeTimeSpeed(int change) {
     time_speed += change;
     double speed = (double)time_speed / 100;
     double new_time = 1000 * (1 / speed);
