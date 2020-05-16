@@ -36,6 +36,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label_2->hide();
     ui->label_3->hide();
     ui->label_4->hide();
+    ui->line1_l->hide();
+    ui->line2_l->hide();
+    ui->line4_l->hide();
+    ui->line20_l->hide();
+
+
+    ui->line1_l->setStyleSheet("background-color: blue; color: white;");
+    ui->line2_l->setStyleSheet("background-color: green; color: white;");
+    ui->line4_l->setStyleSheet("background-color: orange; color: white;");
+    ui->line20_l->setStyleSheet("background-color: purple; color: white;");
 
     /* initialize objects */
     initPens();
@@ -299,7 +309,7 @@ void MainWindow::initPens() {
     bus_brush_1.setStyle(Qt::SolidPattern);
     bus_brush_2.setColor("green");
     bus_brush_2.setStyle(Qt::SolidPattern);
-    bus_brush_4.setColor("yellow");
+    bus_brush_4.setColor("orange");
     bus_brush_4.setStyle(Qt::SolidPattern);
     bus_brush_20.setColor("purple");
     bus_brush_20.setStyle(Qt::SolidPattern);
@@ -747,6 +757,10 @@ void MainWindow::on_startBtn_clicked()
     ui->label_2->show();
     ui->label_3->show();
     ui->label_4->show();
+    ui->line1_l->show();
+    ui->line2_l->show();
+    ui->line4_l->show();
+    ui->line20_l->show();
 
     /* hide button */
     ui->startBtn->hide();
