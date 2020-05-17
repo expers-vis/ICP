@@ -159,17 +159,81 @@ private slots:
      * Time counter is also incremented here.
      */
     void timerAction();
+    /*!
+     * \brief Time speed up slot
+     *
+     * Speeds up rate of calling funciton timerAction in second
+     * every time it´s called until maximum speed is reached.
+     */
     void speedUp();
+    /*!
+     * \brief Time speed down slot
+     *
+     * Slows down rate of calling function timerAction in second
+     * every time it´s called until minimum speed is reached.
+     */
     void speedDown();
+    /*!
+     * \brief Time speed normal slot
+     *
+     * Sets rate of calling function timerAction in second
+     * to normal which is one.
+     */
     void speedNorm();
+    /*!
+     * \brief Highlight line slot
+     *
+     * Highlights chosen line by coloring its streets and buses
+     *
+     * \param Index of line to be highlighted
+     */
     void highlight(int);
+    /*!
+     * \brief Timetable displaying slot
+     *
+     * Displays dialog window with timetable information of chosen line
+     * selected in dropbox
+     */
     void showTimetable();
+    /*!
+     * \brief Bus searching slot
+     *
+     * Looks for bus given in parameter in all lines and decides
+     * to which one he belongs to to decide what timetable should be
+     * displayed.
+     *
+     * \param Bus which timetable should be shown
+     */
     void findBus(QGraphicsEllipseItem*);
-
+    /*!
+     * \brief Start simulation slot
+     *
+     * Starts simulation based on chosen starting time.
+     * Move all buses to correct positions.
+     * Shows all controls of simulation.
+     */
     void on_startBtn_clicked();
 
 signals:
+    /*!
+     * \brief Line timetable signal
+     *
+     * Carries index of line to be displayed in timetable
+     * dialog window
+     *
+     * \param Index of line
+     */
     void timetableNumber(int);
+    /*!
+     * \brief Bus timetable siganl
+     *
+     * Carries current time in which timetable
+     * should be displayed to locate current postion
+     * and bus whose timetable should be displayed.
+     *
+     * \param Current time
+     * \param Chosen bus
+     */
     void timetableBus(long int, t_bus*);
 };
 
