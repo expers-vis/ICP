@@ -118,11 +118,55 @@ private:
     void initSceneStops(QGraphicsScene* scene);
     void initTimer();
     void initPens();
+    /*!
+     * \brief Connect all signals
+     *
+     * Function in which all signals are connected
+     */
     void connectSignals();
+    /*!
+     * \brief Initialize selectbox
+     *
+     * Inserts options for every line to selectbox
+     */
     void initSelectBox();
+    /*!
+     * \brief Highlight line
+     *
+     * Highlights chosen line and its buses when it´s chosen
+     * in selectbox or clicked on. Highlights it by coloring
+     * line and buses.
+     *
+     * \param Line to be highlited
+     */
     void highlight_line(t_line*);
+    /*!
+     * \brief Drop highlight of line
+     *
+     * Drops highlight of currently highlighted line when
+     * you click away or choose another line in selectbox.
+     * Changes coloring back to normal.
+     *
+     * \param Line which is currently highlighted and should be dropped
+     */
     void drop_highlight_line(t_line*);
+    /*!
+     * \brief Time formation
+     *
+     * Formats time from seconds to hours:minutes:seconds
+     *
+     * \param Time in seconds which should be formated
+     */
     inline QString formatTime(long int);
+
+    /*!
+     * \brief Time speed change
+     *
+     * Cahnges speed of simulated timer depenig on given parameter.
+     * Displays current speed.
+     *
+     * \param Coefficient to change speed
+     */
     inline void changeTimeSpeed(int);
 
 private slots:
