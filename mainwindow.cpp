@@ -82,12 +82,7 @@ void MainWindow::initScene()
 
 
     /* render background */
-    /*auto bg_img = QPixmap(QCoreApplication::applicationDirPath() + "/original.png", "png", Qt::AutoColor);     // load image
-    bg_img = bg_img.scaledToWidth(400, Qt::TransformationMode::FastTransformation);
-    bg_img = bg_img.scaledToHeight(400, Qt::TransformationMode::FastTransformation);
-    auto bg_ptr = scene->addPixmap(bg_img);     // insert image into scene
-    bg_ptr->setPos(-40, 10);*/
-    scene->addRect(-40, 10, 400, 400, street_highlight); // background bounds for testing
+    //scene->addRect(-40, 10, 400, 400, street_highlight); // background bounds for testing
 
     street_list = new QVector<t_street*>;
     stop_list = new QVector<t_stop*>;
@@ -112,14 +107,14 @@ void MainWindow::initScene()
     /* render bus icons */
     initSceneBuses(scene);
 
-    line1->getTimetable("line1_timetable.txt");
-    line2->getTimetable("line2_timetable.txt");
-    line4->getTimetable("line4_timetable.txt");
-    line20->getTimetable("line20_timetable.txt");
+    line1->getTimetable("line1_timetable");
+    line2->getTimetable("line2_timetable");
+    line4->getTimetable("line4_timetable");
+    line20->getTimetable("line20_timetable");
 }
 
 void MainWindow::initSceneStreets(QGraphicsScene* scene) {
-    QFile file("data/streets.txt");      // filename
+    QFile file("data/streets");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -162,14 +157,10 @@ void MainWindow::initSceneStreets(QGraphicsScene* scene) {
     line2->makeRoute();
     line4->makeRoute();
     line20->makeRoute();
-    /*QVector<QPointF>::iterator i;
-    for(i = line2->route.begin(); i != line2->route.end(); i++) {
-        auto p =scene->addEllipse((*i).x() - 1, (*i).y() - 1, 2, 2, bus_pen_highlight, bus_brush_highlight);
-    }*/
 }
 
 void MainWindow::initSceneStops(QGraphicsScene *scene) {
-    QFile file("data/stops.txt");      // filename
+    QFile file("data/stops");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -208,7 +199,7 @@ void MainWindow::initSceneStops(QGraphicsScene *scene) {
 }
 
 void MainWindow::initSceneBuses(QGraphicsScene *scene) {
-    QFile file("data/buses.txt");      // filename
+    QFile file("data/buses");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {

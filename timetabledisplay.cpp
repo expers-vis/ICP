@@ -22,19 +22,19 @@ void timetableDisplay::on_timetableExitBtn_clicked()
 void timetableDisplay::recieveTimetable(int idx) {
     switch(idx) {
         case 1:
-            displayTimetable("line1_timetable.txt", 1);
+            displayTimetable("line1_timetable", 1);
         break;
 
         case 2:
-            displayTimetable("line2_timetable.txt", 2);
+            displayTimetable("line2_timetable", 2);
         break;
 
         case 3:
-            displayTimetable("line4_timetable.txt", 4);
+            displayTimetable("line4_timetable", 4);
         break;
 
         case 4:
-            displayTimetable("line20_timetable.txt", 20);
+            displayTimetable("line20_timetable", 20);
         break;
 
     default:
@@ -43,7 +43,7 @@ void timetableDisplay::recieveTimetable(int idx) {
 }
 
 void timetableDisplay::recieveBus(long int time, t_bus *bus) {
-    QFile t_file("timetables/line" + QString::number(bus->line_id) + "_timetable.txt");
+    QFile t_file("timetables/line" + QString::number(bus->line_id) + "_timetable");
 
     if(t_file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream t_stream(&t_file);
@@ -86,7 +86,7 @@ void timetableDisplay::recieveBus(long int time, t_bus *bus) {
 
 void timetableDisplay::displayTimetable(QString t_filename, int line_id) {
     QFile timetable_file("timetables/" + t_filename);
-    QFile bus_file("data/buses.txt");
+    QFile bus_file("data/buses");
 
     /* open files */
     if (timetable_file.open(QIODevice::ReadOnly | QIODevice::Text) && bus_file.open(QIODevice::ReadOnly | QIODevice::Text)) {

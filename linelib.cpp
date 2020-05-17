@@ -29,7 +29,7 @@ void t_line::getTimetable(QString filename)
 
 void t_line::claimStreets(QVector<t_street*>* street_list) {
     /* claim streets */
-    QFile file("data/lines.txt");      // filename
+    QFile file("data/lines");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -72,7 +72,7 @@ void t_line::claimStreets(QVector<t_street*>* street_list) {
 
 void t_line::claimStops(QVector<t_stop*>* stop_list) {
     /* claim streets */
-    QFile file("data/stops_info.txt");      // filename
+    QFile file("data/stops_info");      // filename
     QString line;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
